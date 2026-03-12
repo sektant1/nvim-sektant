@@ -11,9 +11,11 @@ return {
       ensure_installed = {
         'bash',
         'c',
+        'python',
         'cpp',
         'diff',
         'html',
+        'http',
         'lua',
         'luadoc',
         'markdown',

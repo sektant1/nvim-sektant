@@ -95,4 +95,8 @@ local statusline = {
 }
 vim.o.statusline = table.concat(statusline, '')
 
+vim.api.nvim_set_hl(0, 'SignColumn', { clear })
+
+vim.opt.termguicolors = true
+
 -- vim: ts=4 sts=4 sw=4 et
