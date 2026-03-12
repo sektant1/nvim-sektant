@@ -76,7 +76,7 @@ return {
 
           -- see `:help K` for why this keymap
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
-          map('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+          -- map('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
           map('<leader>ls', ':ClangdSwitchSourceHeader<cr>', 'Switch Source/Header')
 
           -- Rename the variable under your cursor.
@@ -242,8 +242,9 @@ return {
         'clang-format',
         'cmakelang',
         'ts_ls',
-        'cmake-language-server',
+        'ruff',
         'bash-language-server',
+        'neocmakelsp',
         'css-lsp',
         'jsonls',
         'html-lsp',

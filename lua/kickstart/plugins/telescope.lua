@@ -72,7 +72,7 @@ return {
         detection_methods = { 'lsp', 'pattern' },
         patterns = { '=src', '.git', 'Makefile', 'package.json', 'pyproject.toml', 'go.mod', 'Cargo.toml', 'CMakeLists.txt' },
         exclude_dirs = { '~/' },
-        silent_chdir = false,
+        silent_chdir = true,
       }
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')

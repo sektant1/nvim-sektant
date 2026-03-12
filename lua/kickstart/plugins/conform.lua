@@ -20,6 +20,7 @@ return {
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = {}
+        vim.filetype.add { filename = { ['CMakeLists.txt'] = 'cmake' } }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
@@ -33,6 +34,7 @@ return {
         lua = { 'stylua' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
+        cmake = { 'cmake_format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --

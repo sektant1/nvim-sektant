@@ -73,9 +73,9 @@ return {
     -- Keymaps (CMake)
     vim.keymap.set('n', '<leader>cc', task 'Task start cmake configure', { desc = 'CMake: configure' })
     vim.keymap.set('n', '<leader>cb', task 'Task start cmake build', { desc = 'CMake: build (selected target)' })
-    vim.keymap.set('n', '<leader>cA', task 'Task start cmake build_all', { desc = 'CMake: build all' })
+    vim.keymap.set('n', '<leader>ca', task 'Task start cmake build_all', { desc = 'CMake: build all' })
     vim.keymap.set('n', '<leader>cr', task 'Task start cmake run', { desc = 'CMake: run (build+run)' })
-    vim.keymap.set('n', '<F7>', task 'Task start cmake debug', { desc = 'CMake: debug (build+dap)' })
+    vim.keymap.set('n', '<leader>cd', task 'Task start cmake debug', { desc = 'CMake: debug (build+dap)' })
 
     -- “tests target” + ctest (global task added above)
     vim.keymap.set('n', '<leader>cT', task 'Task start cmake test', { desc = 'CMake: build "tests" + ctest' })
@@ -84,7 +84,7 @@ return {
     vim.keymap.set('n', '<leader>ct', task 'Task start cmake ctest', { desc = 'CMake: ctest' })
 
     -- selection UI
-    vim.keymap.set('n', '<leader>cS', task 'Task set_module_param cmake target', { desc = 'CMake: select target' })
+    vim.keymap.set('n', '<leader>cs', task 'Task set_module_param cmake target', { desc = 'CMake: select target' })
     vim.keymap.set('n', '<leader>cB', task 'Task set_module_param cmake build_type', { desc = 'CMake: select build type' })
     vim.keymap.set('n', '<leader>ck', task 'Task set_module_param cmake build_kit', { desc = 'CMake: select kit' })
 

@@ -56,28 +56,44 @@ local cpp_flags = {
   '-g',
 }
 
-local function compile_current_cpp_term()
+local function compile_and_run_current_cpp_term()
   vim.cmd 'write'
   local file = vim.api.nvim_buf_get_name(0)
   if file == '' then
     return
   end
 
-  local out = vim.fn.fnamemodify(file, ':r') -- same dir, no extension
-  local cmd = table.concat(vim.tbl_flatten { 'g++', cpp_flags, { vim.fn.shellescape(file), '-o', vim.fn.shellescape(out) } }, ' ')
+  local file_dir = vim.fn.fnamemodify(file, ':h')
+  local root = vim.fn.fnamemodify(file_dir, ':h') -- parent of /src
+  local out_dir = root .. '/bin/debug'
+  local out = out_dir .. '/' .. vim.fn.fnamemodify(file, ':t:r')
+
+  -- Ensure output directory exists
+  vim.fn.mkdir(out_dir, 'p')
+
+  local compile_cmd = table.concat(
+    vim.tbl_flatten {
+      'g++',
+      cpp_flags,
+      { vim.fn.shellescape(file), '-o', vim.fn.shellescape(out) },
+    },
+    ' '
+  )
+
+  local run_cmd = vim.fn.shellescape(out)
+
+  local full = string.format('%s && %s', compile_cmd, run_cmd)
 
   vim.cmd 'botright split | resize 12'
-  vim.cmd('term ' .. cmd)
+  vim.cmd('term ' .. full)
 end
 
-vim.keymap.set('n', '<leader>cf', compile_current_cpp_term, { desc = 'Compile current C++ file' })
+vim.keymap.set('n', '<leader>cf', compile_and_run_current_cpp_term, { desc = 'Compile & run current C++ file' })
 
 local function open_root_cmakelists()
-  -- start from current buffer's directory (or cwd if no file)
   local bufname = vim.api.nvim_buf_get_name(0)
   local start_dir = (bufname ~= '' and vim.fs.dirname(bufname)) or uv.cwd()
 
-  -- project root = nearest parent containing .git
   local root = vim.fs.root(start_dir, { '.git' }) or start_dir
 
   local target = root .. '/CMakeLists.txt'

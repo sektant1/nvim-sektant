@@ -18,6 +18,7 @@ return {
         hide = {
           statusline = false,
         },
+
         config = {
           header = vim.split(logo, '\n'),
           center = {
@@ -53,6 +54,18 @@ return {
               icon = ' ',
               key = 'q',
             },
+          },
+          sections = {
+            {
+              section = 'terminal',
+              cmd = 'pokemon-colorscripts -r --no-title; sleep .1',
+              random = 10,
+              indent = 4,
+              height = 30,
+            },
+            { section = 'header' },
+            { section = 'keys', gap = 1, padding = 1 },
+            { section = 'startup' },
           },
         },
       }
