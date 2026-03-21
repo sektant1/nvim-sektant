@@ -290,7 +290,7 @@ else
   hi('Title',            { fg = 'Magenta', bold = true,                  ctermfg = 'LightMagenta' })
   hi('Visual',           { fg = 'LightGrey', bg = '#575757',             ctermfg = 'Black', ctermbg = 'Grey' })
   hi('WarningMsg',       { fg = 'Orange',                                ctermfg = 'LightRed' })
-  hi('Comment',          { fg = '#e36dba',                               ctermfg = 'Cyan' })
+  hi('Comment',          { fg = '#a14882',                               ctermfg = 'Cyan' })
   hi('Constant',         { fg = 'Magenta',   bold = true,                               ctermfg = 'Cyan' })
   hi('Letter',           { fg = '#00ff00',  bold = true,                                 ctermfg = 'Cyan' })
   -- hi('Constant',         { fg = '#ffa0a0',                               ctermfg = 'Magenta' })

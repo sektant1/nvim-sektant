@@ -11,10 +11,10 @@ vim.keymap.set('n', '<leader>D', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -115,12 +115,12 @@ map({ 'n', 'x' }, '<leader>y', '"+y', { desc = 'which_key_ignore' })
 map({ 'n', 'x' }, '<leader>D', '"+d', { desc = 'which_key_ignore' })
 map({ 'v', 'x', 'n' }, '<C-y>', '"+y', { desc = 'which_key_ignore' })
 
-map('n', '<leader>w', '<Cmd>update<CR>', { desc = 'which_key_ignore' })
--- map('n', '<leader>q', ':bdelete<cr>', { desc = 'which_key_ignore' })
-map('n', '<leader>q', '<Cmd>quit<CR>', { desc = 'which_key_ignore' })
--- map('n', '<leader>Q', '<Cmd>wqa<CR>', { desc = 'Quit all and write' })
-map('n', '<leader>O', '<Cmd>restart<CR>', { desc = 'which_key_ignore' })
-map('n', '<leader>o', '<Cmd>source %<CR>', { desc = 'which_key_ignore' })
+-- vim.keymap.set('n', '<leader>q', ':bdelete<cr>', { desc = 'which_key_ignore' })
+-- vim.keymap.set('n', '<leader>Q', '<Cmd>wqa<CR>', { desc = 'Quit all and write' })
+vim.keymap.set('n', '<leader>w', '<Cmd>update<CR>', { desc = 'which_key_ignore' })
+vim.keymap.set('n', '<leader>q', '<Cmd>quit<CR>', { desc = 'which_key_ignore' })
+vim.keymap.set('n', '<leader>O', '<Cmd>restart<CR>', { desc = 'which_key_ignore' })
+vim.keymap.set('n', '<leader>o', '<Cmd>source %<CR>', { desc = 'which_key_ignore' })
 
 map({ 'n', 'v', 'x' }, '<leader>sv', '<Cmd>edit $MYVIMRC<CR>', { desc = 'init.lua' })
 map({ 'n', 'v', 'x' }, '<leader>sz', '<Cmd>e ~/.bashrc<CR>', { desc = '.bashrc' })
@@ -177,7 +177,7 @@ for i = 1, 4 do
 end
 
 -- file managers / OS
-map('n', '<leader>e', '<Cmd>Yazi<CR>', { desc = 'File Tree' })
+-- map('n', '<leader>e', '<Cmd>Yazi<CR>', { desc = 'File Tree' })
 map('n', '<C-f>', '<Cmd>Open .<CR>', { desc = 'Open in OS Finder' })
 map('n', '<leader>a', ':edit #<CR>', { desc = 'which_key_ignore' })
 

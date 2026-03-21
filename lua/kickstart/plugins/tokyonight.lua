@@ -1,4 +1,14 @@
 return {
+  {
+    'RostislavArts/naysayer.nvim',
+    priority = 1000,
+    lazy = false,
+    config = function()
+      -- vim.cmd.colorscheme 'naysayer'
+    end,
+  },
+  { 'Mofiqul/dracula.nvim' },
+
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -21,7 +31,7 @@ return {
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
 
       vim.api.nvim_set_option_value('background', 'dark', {}) -- or "light"
-      vim.cmd [[colorscheme mine]]
+      vim.cmd [[colorscheme dracula]]
     end,
   },
 }
