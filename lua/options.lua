@@ -87,33 +87,37 @@ vim.o.showtabline = 0
 vim.o.winborder = 'solid'
 vim.o.guicursor = ''
 
-_G.StatuslineGit = function()
-  local head = vim.b.gitsigns_head
-  return (head and head ~= '') and (' [' .. head .. ']') or ''
-end
+-- _G.StatuslineGit = function()
+--   local head = vim.b.gitsigns_head
+--   return (head and head ~= '') and (' [' .. head .. ']') or ''
+-- end
+--
+-- _G.StatuslineDiag = function()
+--   local e = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+--   local w = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+--   local parts = {}
+--   if e > 0 then
+--     parts[#parts + 1] = 'E:' .. e
+--   end
+--   if w > 0 then
+--     parts[#parts + 1] = 'W:' .. w
+--   end
+--   return #parts > 0 and (' [' .. table.concat(parts, ' ') .. ']') or ''
+-- end
 
-_G.StatuslineDiag = function()
-  local e = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
-  local w = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
-  local parts = {}
-  if e > 0 then parts[#parts + 1] = 'E:' .. e end
-  if w > 0 then parts[#parts + 1] = 'W:' .. w end
-  return #parts > 0 and (' [' .. table.concat(parts, ' ') .. ']') or ''
-end
-
-local statusline = {
-  ' %n ',                         -- buffer number
-  '%t',                           -- filename
-  '%r',                           -- [RO] if readonly
-  '%m',                           -- [+] if modified
-  '%{v:lua.StatuslineDiag()}',    -- E/W diagnostic counts
-  '%=',                           -- right-align separator
-  '%{v:lua.StatuslineGit()}',     -- git branch
-  '  %{&filetype}',               -- filetype
-  '  %3l:%-2c',                   -- line:col
-  '  %2p%% ',                     -- % through file
-}
-vim.o.statusline = table.concat(statusline, '')
+-- local statusline = {
+--   ' %n ',                         -- buffer number
+--   '%t',                           -- filename
+--   '%r',                           -- [RO] if readonly
+--   '%m',                           -- [+] if modified
+--   '%{v:lua.StatuslineDiag()}',    -- E/W diagnostic counts
+--   '%=',                           -- right-align separator
+--   '%{v:lua.StatuslineGit()}',     -- git branch
+--   '  %{&filetype}',               -- filetype
+--   '  %3l:%-2c',                   -- line:col
+--   '  %2p%% ',                     -- % through file
+-- }
+-- vim.o.statusline = table.concat(statusline, '')
 
 vim.api.nvim_set_hl(0, 'SignColumn', { clear })
 

@@ -20,10 +20,15 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { desc = 'Move to left window' })
+vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j', { desc = 'Move to lower window' })
+vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Move to upper window' })
+vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { desc = 'Move to right window' })
 
 -- Resize splits with Ctrl+Arrow keys
 vim.keymap.set('n', '<C-Up>', '<C-w>+', { desc = 'Increase window height' })
@@ -261,15 +266,41 @@ map('n', '<leader>4', function()
 end, { desc = 'Harpoon file 4' })
 
 -- ── Terminal splits (<leader>t) ──────────────────────────────────────────────
+local vterm_buf, vterm_win = nil, nil
 map('n', '<leader>v', function()
-  vim.cmd 'botright vsplit | vertical resize 50 | term'
-  vim.cmd 'startinsert'
-end, { desc = 'Terminal vsplit' })
+  if vterm_win and vim.api.nvim_win_is_valid(vterm_win) then
+    vim.api.nvim_win_close(vterm_win, false)
+    vterm_win = nil
+  else
+    vim.cmd 'vsplit | vertical resize 50'
+    if vterm_buf and vim.api.nvim_buf_is_valid(vterm_buf) then
+      vim.api.nvim_win_set_buf(0, vterm_buf)
+    else
+      vim.cmd 'term'
+      vterm_buf = vim.api.nvim_get_current_buf()
+    end
+    vterm_win = vim.api.nvim_get_current_win()
+    vim.cmd 'startinsert'
+  end
+end, { desc = 'Toggle terminal vsplit' })
 
+local hterm_buf, hterm_win = nil, nil
 map('n', '<leader>h', function()
-  vim.cmd 'split | resize 15 | term'
-  vim.cmd 'startinsert'
-end, { desc = 'Terminal hsplit' })
+  if hterm_win and vim.api.nvim_win_is_valid(hterm_win) then
+    vim.api.nvim_win_close(hterm_win, false)
+    hterm_win = nil
+  else
+    vim.cmd 'split | resize 15'
+    if hterm_buf and vim.api.nvim_buf_is_valid(hterm_buf) then
+      vim.api.nvim_win_set_buf(0, hterm_buf)
+    else
+      vim.cmd 'term'
+      hterm_buf = vim.api.nvim_get_current_buf()
+    end
+    hterm_win = vim.api.nvim_get_current_win()
+    vim.cmd 'startinsert'
+  end
+end, { desc = 'Toggle terminal hsplit' })
 
 -- ── HTTP / Kulala (<leader>h) ─────────────────────────────────────────────────
 map('n', '<leader>Hh', function()
