@@ -25,6 +25,12 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Resize splits with Ctrl+Arrow keys
+vim.keymap.set('n', '<C-Up>', '<C-w>+', { desc = 'Increase window height' })
+vim.keymap.set('n', '<C-Down>', '<C-w>-', { desc = 'Decrease window height' })
+vim.keymap.set('n', '<C-Left>', '<C-w><', { desc = 'Decrease window width' })
+vim.keymap.set('n', '<C-Right>', '<C-w>>', { desc = 'Increase window width' })
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -153,6 +159,13 @@ map({ 'n', 'v', 'x' }, ':', ';', { desc = 'Repeat last f/t' })
 map({ 'n', 'v', 'x' }, '<C-s>', [[:s/\V]], { desc = 'Substitute in selection' })
 -- map({ "n", "v", "x" }, "<leader>n", ":norm ", { desc = "Run normal command" })
 
+-- vim.keymap.set('n', '<leader>pi"', 'vi"p', { noremap = false })
+-- vim.keymap.set('n', "<leader>pi'", "vi'p", { noremap = false })
+-- vim.keymap.set('n', '<leader>pi(', 'vi(p', { noremap = false })
+-- vim.keymap.set('n', '<leader>pi{', 'vi{p', { noremap = false })
+-- vim.keymap.set('n', '<leader>pi[', 'vi[p', { noremap = false })
+-- vim.keymap.set('n', '<leader>pib', 'vibp', { noremap = false })
+
 -- tmux passthrough
 vim.keymap.set('n', '<M-b>', function()
   vim.fn.system { 'tmux', 'send-keys', 'M-b' }
@@ -167,14 +180,14 @@ vim.keymap.set('n', '<M-t>', function()
   vim.fn.system { 'tmux', 'send-keys', 'M-t' }
 end)
 
--- tabs
-map({ 'n', 't' }, '<leader>n', '<Cmd>tabnew<CR>', { desc = 'Tab new' })
-map({ 'n', 't' }, '<leader>x', '<Cmd>tabclose<CR>', { desc = 'Tab close' })
-map({ 'n', 't' }, '<leader><S-Tab>', '<Cmd>tabprevious<CR>', { desc = 'which_key_ignore' })
-map({ 'n', 't' }, '<leader><Tab>', '<Cmd>tabnext<CR>', { desc = 'which_key_ignore' })
-for i = 1, 4 do
-  map({ 'n', 't' }, '<leader>' .. i, '<Cmd>tabnext ' .. i .. '<CR>', { desc = 'which_key_ignore' })
-end
+-- -- tabs
+-- map({ 'n' }, '<leader>n', '<Cmd>tabnew<CR>', { desc = 'Tab new' })
+-- map({ 'n' }, '<leader>x', '<Cmd>tabclose<CR>', { desc = 'Tab close' })
+-- map({ 'n' }, '<leader><S-Tab>', '<Cmd>tabprevious<CR>', { desc = 'which_key_ignore' })
+-- map({ 'n' }, '<leader><Tab>', '<Cmd>tabnext<CR>', { desc = 'which_key_ignore' })
+-- for i = 1, 4 do
+--   map({ 'n' }, '<leader>' .. i, '<Cmd>tabnext ' .. i .. '<CR>', { desc = 'which_key_ignore' })
+-- end
 
 -- file managers / OS
 -- map('n', '<leader>e', '<Cmd>Yazi<CR>', { desc = 'File Tree' })
@@ -188,4 +201,93 @@ map('n', '<leader>d', function()
   vim.diagnostic.open_float()
 end, { desc = 'Diagnostic float' })
 
+-- ── Jest / Neotest (<leader>j) ────────────────────────────────────────────────
+map('n', '<leader>jt', function()
+  require('neotest').output_panel.open()
+  require('neotest').run.run()
+end, { desc = 'Run nearest test' })
+map('n', '<leader>jf', function()
+  require('neotest').output_panel.open()
+  require('neotest').run.run(vim.fn.expand '%')
+end, { desc = 'Run test file' })
+map('n', '<leader>jl', function()
+  require('neotest').output_panel.open()
+  require('neotest').run.run_last()
+end, { desc = 'Run last test' })
+map('n', '<leader>jd', function()
+  require('neotest').run.run { strategy = 'dap' }
+end, { desc = 'Debug nearest test' })
+map('n', '<leader>jx', function()
+  require('neotest').run.stop()
+end, { desc = 'Stop test run' })
+map('n', '<leader>js', function()
+  require('neotest').summary.toggle()
+end, { desc = 'Toggle summary panel' })
+map('n', '<leader>jo', function()
+  require('neotest').output_panel.toggle()
+end, { desc = 'Toggle output panel' })
+map('n', ']j', function()
+  require('neotest').jump.next { status = 'failed' }
+end, { desc = 'Next failed test' })
+map('n', '[j', function()
+  require('neotest').jump.prev { status = 'failed' }
+end, { desc = 'Prev failed test' })
+
+-- ── Harpoon (<leader>m) ──────────────────────────────────────────────────────
+local function harpoon_ui()
+  local harpoon = require 'harpoon'
+  harpoon.ui:toggle_quick_menu(harpoon:list())
+end
+
+map('n', '<leader>ma', function()
+  require('harpoon'):list():add()
+end, { desc = 'Add file' })
+map('n', '<leader>mm', harpoon_ui, { desc = 'Menu' })
+map('n', '<leader>mf', function()
+  local harpoon = require 'harpoon'
+  harpoon.extensions.telescope.telescope(harpoon:list())
+end, { desc = 'Find in telescope' })
+map('n', '<leader>1', function()
+  require('harpoon'):list():select(1)
+end, { desc = 'Harpoon file 1' })
+map('n', '<leader>2', function()
+  require('harpoon'):list():select(2)
+end, { desc = 'Harpoon file 2' })
+map('n', '<leader>3', function()
+  require('harpoon'):list():select(3)
+end, { desc = 'Harpoon file 3' })
+map('n', '<leader>4', function()
+  require('harpoon'):list():select(4)
+end, { desc = 'Harpoon file 4' })
+
+-- ── Terminal splits (<leader>t) ──────────────────────────────────────────────
+map('n', '<leader>v', function()
+  vim.cmd 'botright vsplit | vertical resize 50 | term'
+  vim.cmd 'startinsert'
+end, { desc = 'Terminal vsplit' })
+
+map('n', '<leader>h', function()
+  vim.cmd 'split | resize 15 | term'
+  vim.cmd 'startinsert'
+end, { desc = 'Terminal hsplit' })
+
+-- ── HTTP / Kulala (<leader>h) ─────────────────────────────────────────────────
+map('n', '<leader>Hh', function()
+  require('kulala').run()
+end, { desc = 'Run request' })
+map('n', '<leader>Ha', function()
+  require('kulala').run_all()
+end, { desc = 'Run all requests' })
+map('n', '<leader>Hn', function()
+  require('kulala').jump_next()
+end, { desc = 'Next request' })
+map('n', '<leader>Hp', function()
+  require('kulala').jump_prev()
+end, { desc = 'Prev request' })
+map('n', '<leader>Hc', function()
+  require('kulala').copy()
+end, { desc = 'Copy as curl' })
+map('n', '<leader>Hi', function()
+  require('kulala').inspect()
+end, { desc = 'Inspect request' })
 -- vim: ts=2 sts=2 sw=2 et

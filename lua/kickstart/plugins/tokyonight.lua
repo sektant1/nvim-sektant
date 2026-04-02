@@ -31,7 +31,7 @@ return {
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
 
       vim.api.nvim_set_option_value('background', 'dark', {}) -- or "light"
-      vim.cmd [[colorscheme dracula]]
+      vim.cmd [[colorscheme tokyonight-night]]
     end,
   },
 }

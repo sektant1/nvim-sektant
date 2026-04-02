@@ -99,7 +99,64 @@ return {
     config = function()
       local dap = require 'dap'
       local dapui = require 'dapui'
+      local js_debug = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js'
 
+      for _, adapter in ipairs { 'pwa-node', 'pwa-chrome', 'node-terminal' } do
+        dap.adapters[adapter] = {
+          type = 'server',
+          host = 'localhost',
+          port = '${port}',
+          executable = {
+            command = 'node',
+            args = { js_debug, '${port}' },
+          },
+        }
+      end
+
+      local js_langs = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' }
+
+      for _, lang in ipairs(js_langs) do
+        dap.configurations[lang] = {
+          {
+            type = 'pwa-node',
+            request = 'launch',
+            name = 'Launch Node file',
+            program = '${file}',
+            cwd = '${workspaceFolder}',
+          },
+          {
+            type = 'pwa-node',
+            request = 'attach',
+            name = 'Attach to Node process',
+            processId = require('dap.utils').pick_process,
+            cwd = '${workspaceFolder}',
+          },
+          {
+            type = 'pwa-chrome',
+            request = 'launch',
+            name = 'Launch Chrome (localhost:3000)',
+            url = 'http://localhost:3000',
+            webRoot = '${workspaceFolder}',
+          },
+          -- Debug Jest: only runs tests in the current file
+          {
+            type = 'pwa-node',
+            request = 'launch',
+            name = 'Debug Jest (current file)',
+            runtimeExecutable = 'npx',
+            runtimeArgs = {
+              'jest',
+              '--runInBand',
+              '--testPathPattern',
+              '${relativeFile}',
+            },
+            rootDir = '${workspaceFolder}',
+            cwd = '${workspaceFolder}',
+            console = 'integratedTerminal',
+            internalConsoleOptions = 'neverOpen',
+          },
+        }
+      end
       require('mason-nvim-dap').setup {
         -- Makes a best effort to setup the various debuggers with
         -- reasonable debug configurations
@@ -116,6 +173,7 @@ return {
           'delve',
           'codelldb',
           'python',
+          'js-debug-adapter',
         },
       }
 
@@ -142,16 +200,16 @@ return {
       }
 
       -- Change breakpoint icons
-      -- vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
-      -- vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
-      -- local breakpoint_icons = vim.g.have_nerd_font
-      --     and { Breakpoint = '', BreakpointCondition = '', BreakpointRejected = '', LogPoint = '', Stopped = '' }
-      --   or { Breakpoint = '●', BreakpointCondition = '⊜', BreakpointRejected = '⊘', LogPoint = '◆', Stopped = '⭔' }
-      -- for type, icon in pairs(breakpoint_icons) do
-      --   local tp = 'Dap' .. type
-      --   local hl = (type == 'Stopped') and 'DapStop' or 'DapBreak'
-      --   vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
-      -- end
+      vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
+      vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
+      local breakpoint_icons = vim.g.have_nerd_font
+          and { Breakpoint = '', BreakpointCondition = '', BreakpointRejected = '', LogPoint = '', Stopped = '' }
+        or { Breakpoint = '●', BreakpointCondition = '⊜', BreakpointRejected = '⊘', LogPoint = '◆', Stopped = '⭔' }
+      for type, icon in pairs(breakpoint_icons) do
+        local tp = 'Dap' .. type
+        local hl = (type == 'Stopped') and 'DapStop' or 'DapBreak'
+        vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
+      end
 
       dap.listeners.after.event_initialized['dapui_config'] = dapui.open
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
@@ -168,6 +226,120 @@ return {
       }
     end,
   },
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'marilari88/neotest-jest',
+      'm00qek/baleia.nvim',
+    },
+    config = function()
+      -- Walk up from `file` returning the path of the first match found
+      local function find_nearest(file, names)
+        local path = vim.fn.fnamemodify(file, ':h')
+        while path ~= '/' do
+          for _, name in ipairs(names) do
+            local candidate = path .. '/' .. name
+            if vim.fn.filereadable(candidate) == 1 then
+              return candidate
+            end
+          end
+          path = vim.fn.fnamemodify(path, ':h')
+        end
+      end
+
+      -- Detect package manager from the nearest lock file
+      local function detect_pkg_manager(file)
+        local path = vim.fn.fnamemodify(file, ':h')
+        while path ~= '/' do
+          if vim.fn.filereadable(path .. '/pnpm-lock.yaml') == 1 then
+            return 'pnpm'
+          end
+          if vim.fn.filereadable(path .. '/yarn.lock') == 1 then
+            return 'yarn'
+          end
+          if vim.fn.filereadable(path .. '/bun.lockb') == 1 then
+            return 'bun'
+          end
+          if vim.fn.filereadable(path .. '/package-lock.json') == 1 then
+            return 'npm'
+          end
+          path = vim.fn.fnamemodify(path, ':h')
+        end
+        return 'npm'
+      end
+
+      require('neotest').setup {
+        adapters = {
+          require 'neotest-jest' {
+            -- Pick the right jest invocation per package manager
+            jestCommand = function(path)
+              local cmds = {
+                npm = 'npx jest',
+                yarn = 'yarn jest',
+                pnpm = 'pnpm exec jest',
+                bun = 'bun test',
+              }
+              local pm = detect_pkg_manager(path)
+              return (cmds[pm] or 'npx jest') .. ' --passWithNoTests --colors'
+            end,
+            -- Find the nearest jest config walking up from the test file
+            jestConfigFile = function(file)
+              return find_nearest(file, {
+                'jest.config.ts',
+                'jest.config.js',
+                'jest.config.mjs',
+                'jest.config.cjs',
+              })
+            end,
+            -- Run from the nearest package.json directory (monorepo-safe)
+            cwd = function(file)
+              local pkg = find_nearest(file, { 'package.json' })
+              if pkg then
+                return vim.fn.fnamemodify(pkg, ':h')
+              end
+              return vim.fn.getcwd()
+            end,
+            env = { CI = true },
+          },
+        },
+        output_panel = { enabled = true },
+        summary = { enabled = true },
+      }
+
+      local baleia = require('baleia').setup {}
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'neotest-output-panel',
+        callback = function(ev)
+          baleia.automatically(ev.buf)
+        end,
+      })
+    end,
+  },
+
+  -- Harpoon: mark files and jump between them instantly
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('harpoon'):setup()
+    end,
+  },
+
+  -- HTTP client: send requests from .http files (replaces Postman/Insomnia)
+  {
+    'mistweaverco/kulala.nvim',
+    ft = 'http',
+    opts = {
+      global_keymaps = false,
+      ui = { display_mode = 'split' },
+    },
+  },
+
   {
     'linux-cultist/venv-selector.nvim',
     cmd = 'VenvSelect',

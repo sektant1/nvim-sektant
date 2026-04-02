@@ -64,7 +64,7 @@ return {
         { '<leader>c', group = 'CMake', icon = '' },
         { '<leader>l', group = 'LSP', icon = '' },
         { '<leader>t', group = 'Toggles' },
-        { '<leader>h', group = 'Git Hunk', mode = { 'n', 'v' } },
+        { '<leader>g', group = 'Git Hunk', mode = { 'n', 'v' } },
       },
     },
   },
