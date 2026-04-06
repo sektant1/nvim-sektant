@@ -65,6 +65,7 @@ return {
         { '<leader>l', group = 'LSP', icon = '' },
         { '<leader>t', group = 'Toggles' },
         { '<leader>g', group = 'Git Hunk', mode = { 'n', 'v' } },
+        { '<leader>p', group = 'Profile', icon = '' },
       },
     },
   },

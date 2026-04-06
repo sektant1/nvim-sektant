@@ -219,11 +219,69 @@ return {
       -- Install golang specific config
       require('dap-go').setup {
         delve = {
-          -- On Windows delve must be run attached or it crashes.
-          -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
           detached = vim.fn.has 'win32' == 0,
         },
       }
+
+      -- ── C / C++ via codelldb ────────────────────────────────────────────
+      local codelldb = vim.fn.stdpath 'data' .. '/mason/packages/codelldb/extension/adapter/codelldb'
+      if vim.fn.executable(codelldb) == 1 then
+        dap.adapters.codelldb = {
+          type = 'server',
+          port = '${port}',
+          executable = { command = codelldb, args = { '--port', '${port}' } },
+        }
+      end
+
+      -- Pick an executable with a file prompt (DAP program fields must be sync)
+      local function pick_program()
+        return vim.fn.input('Executable: ', vim.fn.getcwd() .. '/', 'file')
+      end
+
+      local cpp_configs = {
+        -- Standard launch — works for any C++ binary
+        {
+          name = 'C++: Launch',
+          type = 'codelldb',
+          request = 'launch',
+          program = pick_program,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = {},
+        },
+        -- OpenGL / graphics debug launch:
+        --   • MESA_DEBUG=1          → mesa prints GL errors to stderr
+        --   • LIBGL_DEBUG=verbose   → driver logs every API call
+        --   • GL_DEBUG_OUTPUT env   → works alongside glDebugMessageCallback
+        --   The binary should be compiled with -DCMAKE_BUILD_TYPE=Debug
+        --   and create a GL debug context (GLFW_OPENGL_DEBUG_CONTEXT = GL_TRUE)
+        {
+          name = 'C++: Launch (OpenGL debug env)',
+          type = 'codelldb',
+          request = 'launch',
+          program = pick_program,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = {},
+          env = {
+            MESA_DEBUG = '1',
+            LIBGL_DEBUG = 'verbose',
+            MESA_GL_VERSION_OVERRIDE = '4.6',
+            -- Vulkan validation layer (harmless if Vulkan not used)
+            VK_INSTANCE_LAYERS = 'VK_LAYER_KHRONOS_validation',
+          },
+        },
+        -- Attach to an already-running process
+        {
+          name = 'C++: Attach to process',
+          type = 'codelldb',
+          request = 'attach',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
+      }
+      dap.configurations.cpp = cpp_configs
+      dap.configurations.c   = cpp_configs
     end,
   },
   {
