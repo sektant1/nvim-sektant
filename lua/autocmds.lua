@@ -6,3 +6,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
   end,
 })
+
+-- Reload buffer on FocusGained, TermLeave, BufEnter, WinEnter, CursorHold
+vim.api.nvim_create_autocmd({ 'FocusGained', 'TermLeave', 'BufEnter', 'WinEnter', 'CursorHold' }, {
+  callback = function()
+    if vim.fn.mode() ~= 'c' then -- Don't check while in command line
+      vim.cmd 'checktime'
+    end
+  end,
+})

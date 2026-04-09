@@ -281,7 +281,7 @@ return {
         },
       }
       dap.configurations.cpp = cpp_configs
-      dap.configurations.c   = cpp_configs
+      dap.configurations.c = cpp_configs
     end,
   },
   {
@@ -333,7 +333,6 @@ return {
       require('neotest').setup {
         adapters = {
           require 'neotest-jest' {
-            -- Pick the right jest invocation per package manager
             jestCommand = function(path)
               local cmds = {
                 npm = 'npx jest',
@@ -344,7 +343,6 @@ return {
               local pm = detect_pkg_manager(path)
               return (cmds[pm] or 'npx jest') .. ' --passWithNoTests --colors'
             end,
-            -- Find the nearest jest config walking up from the test file
             jestConfigFile = function(file)
               return find_nearest(file, {
                 'jest.config.ts',
@@ -353,7 +351,6 @@ return {
                 'jest.config.cjs',
               })
             end,
-            -- Run from the nearest package.json directory (monorepo-safe)
             cwd = function(file)
               local pkg = find_nearest(file, { 'package.json' })
               if pkg then
@@ -361,12 +358,32 @@ return {
               end
               return vim.fn.getcwd()
             end,
-            env = { CI = true },
+            env = { CI = false },
           },
         },
-        output_panel = { enabled = true },
         summary = { enabled = true },
+        output_panel = { enabled = true },
       }
+
+      -- Fix: neotest-jest wraps --testNamePattern in single quotes that
+      -- Jest 30 treats as literal regex characters, causing all tests to skip.
+      local adapter = require('neotest-jest')
+      local orig_build_spec = adapter.build_spec
+      adapter.build_spec = function(args)
+        local spec = orig_build_spec(args)
+        if spec and spec.command then
+          for i, v in ipairs(spec.command) do
+            local pat = v:match '^--testNamePattern=(.+)$'
+            if pat then
+              pat = pat:gsub("^'", ''):gsub("'$", '')
+              spec.command[i] = '--testNamePattern=' .. pat
+              break
+            end
+          end
+        end
+        return spec
+      end
+
 
       local baleia = require('baleia').setup {}
       vim.api.nvim_create_autocmd('FileType', {
