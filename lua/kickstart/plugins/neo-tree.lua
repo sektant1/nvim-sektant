@@ -11,7 +11,7 @@ return {
   },
   lazy = false,
   keys = {
-    { '<C-n>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<C-n>', ':Neotree toggle<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
     filesystem = {
@@ -20,6 +20,7 @@ return {
         enabled = false,
       },
       window = {
+        width = 30,
         mappings = {
           ['<C-n>'] = 'close_window',
           ['Y'] = {

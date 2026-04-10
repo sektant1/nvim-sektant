@@ -6,7 +6,7 @@
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>D', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>D', vim.diagnostic.setloclist, { desc = 'Open diagnostic Quickfix list' })
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
@@ -128,6 +128,7 @@ map({ 'v', 'x', 'n' }, '<C-y>', '"+y', { desc = 'which_key_ignore' })
 -- vim.keymap.set('n', '<leader>q', ':bdelete<cr>', { desc = 'which_key_ignore' })
 -- vim.keymap.set('n', '<leader>Q', '<Cmd>wqa<CR>', { desc = 'Quit all and write' })
 vim.keymap.set('n', '<leader>w', '<Cmd>update<CR>', { desc = 'which_key_ignore' })
+
 vim.keymap.set('n', '<leader>q', '<Cmd>quit<CR>', { desc = 'which_key_ignore' })
 vim.keymap.set('n', '<leader>O', '<Cmd>restart<CR>', { desc = 'which_key_ignore' })
 vim.keymap.set('n', '<leader>o', '<Cmd>source %<CR>', { desc = 'which_key_ignore' })
