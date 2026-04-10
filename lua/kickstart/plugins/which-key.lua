@@ -1,71 +1,36 @@
--- NOTE: Plugins can also be configured to run Lua code when they are loaded.
---
--- This is often very useful to both group configuration, as well as handle
--- lazy loading plugins that don't need to be loaded immediately at startup.
---
--- For example, in the following configuration, we use:
---  event = 'VimEnter'
---
--- which loads which-key before all the UI elements are loaded. Events can be
--- normal autocommands events (`:help autocmd-events`).
---
--- Then, because we use the `opts` key (recommended), the configuration runs
--- after the plugin has been loaded as `require(MODULE).setup(opts)`.
-
 return {
-  { -- Useful plugin to show you pending keybinds.
+  {
     'folke/which-key.nvim',
-    event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+    event = 'VimEnter',
     opts = {
-      -- delay between pressing a key and opening which-key (milliseconds)
-      -- this setting is independent of vim.o.timeoutlen
-      delay = 0,
+      delay = 300,
       icons = {
-        -- set icon mappings to true if you have a Nerd Font
-        mappings = vim.g.have_nerd_font,
-        -- If you are using a Nerd Font: set icons.keys to an empty table which will use the
-        -- default which-key.nvim defined Nerd Font icons, otherwise define a string table
-        keys = vim.g.have_nerd_font and {} or {
-          Up = '<Up> ',
-          Down = '<Down> ',
-          Left = '<Left> ',
-          Right = '<Right> ',
-          C = '<C-…> ',
-          M = '<M-…> ',
-          D = '<D-…> ',
-          S = '<S-…> ',
-          CR = '<CR> ',
-          Esc = '<Esc> ',
-          ScrollWheelDown = '<ScrollWheelDown> ',
-          ScrollWheelUp = '<ScrollWheelUp> ',
-          NL = '<NL> ',
-          BS = '<BS> ',
-          Space = '<Space> ',
-          Tab = '<Tab> ',
-          F1 = '<F1>',
-          F2 = '<F2>',
-          F3 = '<F3>',
-          F4 = '<F4>',
-          F5 = '<F5>',
-          F6 = '<F6>',
-          F7 = '<F7>',
-          F8 = '<F8>',
-          F9 = '<F9>',
-          F10 = '<F10>',
-          F11 = '<F11>',
-          F12 = '<F12>',
-        },
+        mappings = false,
+        keys = {},
       },
-
-      -- Document existing key chains
+      win = {
+        no_overlap = true,
+        padding = { 1, 1 },
+        title = false,
+      },
+      layout = {
+        width = { min = 20 },
+        spacing = 2,
+      },
+      filter = function(mapping)
+        return mapping.desc and mapping.desc ~= 'which_key_ignore'
+      end,
       spec = {
         { '<leader>b', group = 'Debug' },
         { '<leader>s', group = 'Search' },
-        { '<leader>c', group = 'CMake', icon = '' },
-        { '<leader>l', group = 'LSP', icon = '' },
+        { '<leader>c', group = 'CMake' },
+        { '<leader>l', group = 'LSP' },
         { '<leader>t', group = 'Toggles' },
-        { '<leader>g', group = 'Git Hunk', mode = { 'n', 'v' } },
-        { '<leader>p', group = 'Profile', icon = '' },
+        { '<leader>g', group = 'Git', mode = { 'n', 'v' } },
+        { '<leader>p', group = 'Profile' },
+        { '<leader>m', group = 'Harpoon' },
+        { '<leader>j', group = 'Test' },
+        { '<leader>H', group = 'HTTP' },
       },
     },
   },

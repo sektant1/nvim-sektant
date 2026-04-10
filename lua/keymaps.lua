@@ -10,11 +10,11 @@ vim.keymap.set('n', '<leader>D', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+-- Arrow keys used by multicursor.nvim (up/down = add cursor, left/right = cycle cursor)
+-- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+-- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+-- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+-- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -36,7 +36,6 @@ vim.keymap.set('n', '<C-Down>', '<C-w>-', { desc = 'Decrease window height' })
 vim.keymap.set('n', '<C-Left>', '<C-w><', { desc = 'Decrease window width' })
 vim.keymap.set('n', '<C-Right>', '<C-w>>', { desc = 'Increase window width' })
 
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
@@ -152,7 +151,7 @@ map('n', 'D', 'd$', { desc = 'Delete to end of line' })
 map('v', 'H', '^', { desc = 'Start of line' })
 map('v', 'L', '$', { desc = 'End of line' })
 map('x', '<leader>P', [["_dP]], { desc = 'Replace selection with buffer' })
-map('v', 'p', '"_dP', opts)
+-- map('v', 'p', '"_dP', opts)
 
 map('n', '<C-d>', '<C-d>zz')
 map('n', '<C-u>', '<C-u>zz')
@@ -265,42 +264,43 @@ map('n', '<leader>4', function()
   require('harpoon'):list():select(4)
 end, { desc = 'Harpoon file 4' })
 
--- ── Terminal splits (<leader>t) ──────────────────────────────────────────────
-local vterm_buf, vterm_win = nil, nil
-map('n', '<leader>v', function()
-  if vterm_win and vim.api.nvim_win_is_valid(vterm_win) then
-    vim.api.nvim_win_close(vterm_win, false)
-    vterm_win = nil
-  else
-    vim.cmd 'vsplit | vertical resize 50'
-    if vterm_buf and vim.api.nvim_buf_is_valid(vterm_buf) then
-      vim.api.nvim_win_set_buf(0, vterm_buf)
-    else
-      vim.cmd 'term'
-      vterm_buf = vim.api.nvim_get_current_buf()
-    end
-    vterm_win = vim.api.nvim_get_current_win()
-    vim.cmd 'startinsert'
+-- ── Floating terminal (<C-\>) ────────────────────────────────────────────────
+local fterm_buf, fterm_win = nil, nil
+local function toggle_float_term()
+  if fterm_win and vim.api.nvim_win_is_valid(fterm_win) then
+    vim.api.nvim_win_close(fterm_win, false)
+    fterm_win = nil
+    return
   end
-end, { desc = 'Toggle terminal vsplit' })
 
-local hterm_buf, hterm_win = nil, nil
-map('n', '<leader>h', function()
-  if hterm_win and vim.api.nvim_win_is_valid(hterm_win) then
-    vim.api.nvim_win_close(hterm_win, false)
-    hterm_win = nil
-  else
-    vim.cmd 'split | resize 15'
-    if hterm_buf and vim.api.nvim_buf_is_valid(hterm_buf) then
-      vim.api.nvim_win_set_buf(0, hterm_buf)
-    else
-      vim.cmd 'term'
-      hterm_buf = vim.api.nvim_get_current_buf()
-    end
-    hterm_win = vim.api.nvim_get_current_win()
-    vim.cmd 'startinsert'
+  local width = math.floor(vim.o.columns * 0.85)
+  local height = math.floor(vim.o.lines * 0.80)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  if not fterm_buf or not vim.api.nvim_buf_is_valid(fterm_buf) then
+    fterm_buf = vim.api.nvim_create_buf(false, true)
   end
-end, { desc = 'Toggle terminal hsplit' })
+
+  fterm_win = vim.api.nvim_open_win(fterm_buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+
+  if vim.bo[fterm_buf].buftype ~= 'terminal' then
+    vim.cmd 'term'
+    fterm_buf = vim.api.nvim_get_current_buf()
+  end
+  vim.cmd 'startinsert'
+end
+
+map('n', '<C-\\>', toggle_float_term, { desc = 'Toggle floating terminal' })
+map('t', '<C-\\>', toggle_float_term, { desc = 'Toggle floating terminal' })
 
 -- ── HTTP / Kulala (<leader>h) ─────────────────────────────────────────────────
 map('n', '<leader>Hh', function()
