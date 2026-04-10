@@ -9,14 +9,26 @@ return {
       local set = vim.keymap.set
 
       -- Add or skip cursor above/below
-      set({ 'n', 'x' }, '<up>', function() mc.lineAddCursor(-1) end)
-      set({ 'n', 'x' }, '<down>', function() mc.lineAddCursor(1) end)
-      set({ 'n', 'x' }, '<leader><up>', function() mc.lineSkipCursor(-1) end)
-      set({ 'n', 'x' }, '<leader><down>', function() mc.lineSkipCursor(1) end)
+      set({ 'n', 'x' }, '<up>', function()
+        mc.lineAddCursor(-1)
+      end)
+      set({ 'n', 'x' }, '<down>', function()
+        mc.lineAddCursor(1)
+      end)
+      set({ 'n', 'x' }, '<leader><up>', function()
+        mc.lineSkipCursor(-1)
+      end)
+      set({ 'n', 'x' }, '<leader><down>', function()
+        mc.lineSkipCursor(1)
+      end)
 
       -- Match word/selection: add next/prev, skip next/prev
-      set({ 'n', 'x' }, '<C-n>', function() mc.matchAddCursor(1) end)
-      set({ 'n', 'x' }, '<C-p>', function() mc.matchSkipCursor(1) end)
+      set({ 'n', 'x' }, '<M-n>', function()
+        mc.matchAddCursor(1)
+      end)
+      set({ 'n', 'x' }, '<M-p>', function()
+        mc.matchSkipCursor(1)
+      end)
 
       -- Add/remove cursors with ctrl+click
       set('n', '<c-leftmouse>', mc.handleMouse)
