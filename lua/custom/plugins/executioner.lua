@@ -4,35 +4,35 @@ return {
     cmd = { 'Executioner', 'ExecutionerRerun', 'ExecutionerConfigure', 'ExecutionerBuild', 'ExecutionerBuildLast', 'CreateProject' },
     keys = {
       {
-        '<leader>er',
+        '<F5>',
         function()
           require('executioner').run_scripts()
         end,
         desc = 'Executioner: run script',
       },
       {
-        '<leader>eR',
+        '<F6>',
         function()
           require('executioner').rerun()
         end,
         desc = 'Executioner: rerun last script',
       },
       {
-        '<leader>ec',
+        '<F7>',
         function()
           require('executioner').configure()
         end,
         desc = 'Executioner: configure project',
       },
       {
-        '<leader>eb',
+        '<F4>',
         function()
           require('executioner').build()
         end,
         desc = 'Executioner: build target',
       },
       {
-        '<leader>eB',
+        '<F3>',
         function()
           require('executioner').build_last()
         end,

@@ -28,7 +28,7 @@ vim.keymap.set('n', '<C-Up>', '<C-w>+', { desc = 'Increase window height' })
 vim.keymap.set('n', '<C-Down>', '<C-w>-', { desc = 'Decrease window height' })
 vim.keymap.set('n', '<C-Left>', '<C-w><', { desc = 'Decrease window width' })
 vim.keymap.set('n', '<C-Right>', '<C-w>>', { desc = 'Increase window width' })
-
+vim.keymap.set('n', '<leader>mp', '<CMD>PeekOpen<CR>', { desc = 'Toggle Markdown Preview' })
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
