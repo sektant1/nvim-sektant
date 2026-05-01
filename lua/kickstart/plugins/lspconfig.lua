@@ -1,5 +1,12 @@
 return {
   {
+    'aznhe21/actions-preview.nvim',
+    config = function()
+      vim.keymap.set({ 'v', 'n' }, '<leader>la', require('actions-preview').code_actions)
+    end,
+  },
+
+  {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
     'folke/lazydev.nvim',
@@ -72,7 +79,7 @@ return {
           end
 
           ---- lsp mappings ----
-          map('<leader>la', vim.lsp.buf.code_action, 'Code [A]ction')
+          -- map('<leader>la', vim.lsp.buf.code_action, 'Code [A]ction')
 
           -- see `:help K` for why this keymap
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -143,15 +150,15 @@ return {
         underline = { severity = vim.diagnostic.severity.ERROR },
         signs = vim.g.have_nerd_font and {
           text = {
-            [vim.diagnostic.severity.ERROR] = '󰅚 ',
-            [vim.diagnostic.severity.WARN] = '󰀪 ',
-            [vim.diagnostic.severity.INFO] = '󰋽 ',
-            [vim.diagnostic.severity.HINT] = '󰌶 ',
+            -- [vim.diagnostic.severity.ERROR] = '󰅚 ',
+            -- [vim.diagnostic.severity.WARN] = '󰀪 ',
+            -- [vim.diagnostic.severity.INFO] = '󰋽 ',
+            -- [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
         virtual_text = {
           source = 'if_many',
-          spacing = 2,
+          spacing = 4,
           format = function(diagnostic)
             local diagnostic_message = {
               [vim.diagnostic.severity.ERROR] = diagnostic.message,
@@ -195,6 +202,13 @@ return {
         },
         -- gopls = {},
         pyright = {},
+        jsonls = {
+          settings = {
+            json = {
+              validate = { enable = true },
+            },
+          },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -247,6 +261,7 @@ return {
         'neocmakelsp',
         'css-lsp',
         'jsonls',
+        'jsonlint',
         'html-lsp',
         'tailwindcss-language-server',
         'yaml-language-server',

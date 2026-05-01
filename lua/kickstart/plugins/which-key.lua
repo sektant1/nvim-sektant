@@ -30,7 +30,6 @@ return {
         { '<leader>p', group = 'Profile' },
         { '<leader>m', group = 'Harpoon' },
         { '<leader>j', group = 'Test' },
-        { '<leader>H', group = 'HTTP' },
       },
     },
   },

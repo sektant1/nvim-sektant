@@ -296,6 +296,26 @@ end
 map('n', '<C-\\>', toggle_float_term, { desc = 'Toggle floating terminal' })
 map('t', '<C-\\>', toggle_float_term, { desc = 'Toggle floating terminal' })
 
+-- ── Terminal splits (cwd) ────────────────────────────────────────────────────
+local function term_split(direction, size)
+  local cwd = vim.fn.getcwd()
+  if direction == 'vertical' then
+    vim.cmd('vsplit | vertical resize ' .. size)
+  else
+    vim.cmd('botright split | resize ' .. size)
+  end
+  vim.cmd 'enew'
+  vim.fn.jobstart(vim.o.shell, { term = true, cwd = cwd })
+  vim.cmd 'startinsert'
+end
+
+map('n', '<leader>|', function()
+  term_split('vertical', 50)
+end, { desc = 'Vertical terminal (50, cwd)' })
+map('n', '<leader>-', function()
+  term_split('horizontal', 15)
+end, { desc = 'Horizontal terminal (15, cwd)' })
+
 -- ── HTTP / Kulala (<leader>h) ─────────────────────────────────────────────────
 map('n', '<leader>Hh', function()
   require('kulala').run()

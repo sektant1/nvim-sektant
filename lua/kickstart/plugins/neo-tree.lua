@@ -15,6 +15,7 @@ return {
       { '<C-n>', ':Neotree toggle<CR>', desc = 'NeoTree reveal', silent = true },
     },
     opts = {
+      log_level = 'error',
       filesystem = {
         bind_to_cwd = false,
         follow_current_file = {
@@ -24,6 +25,7 @@ return {
           width = 30,
           mappings = {
             ['<C-n>'] = 'close_window',
+            ['S'] = 'open_vsplit',
             ['Y'] = {
               function(state)
                 local node = state.tree:get_node()

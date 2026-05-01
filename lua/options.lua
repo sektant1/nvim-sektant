@@ -5,10 +5,13 @@
 
 -- Make line numbers default
 vim.o.number = true
-vim.o.relativenumber = true
-
+-- vim.o.relativenumber = true
+--
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
+
+-- Enable doxygen syntax for comments
+vim.g.load_doxygen_syntax = 1
 
 -- Trigger `autoread` when files change on disk
 vim.o.autoread = true
