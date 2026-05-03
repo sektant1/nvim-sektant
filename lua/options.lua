@@ -24,9 +24,9 @@ vim.o.autochdir = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
-end)
+-- vim.schedule(function()
+--   vim.o.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -46,7 +46,7 @@ vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250
 
 -- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 400
 
 -- Configure how new splits should be opened
 vim.o.splitright = true
@@ -61,7 +61,7 @@ vim.o.splitbelow = true
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
 vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -127,5 +127,50 @@ vim.o.guicursor = ''
 vim.api.nvim_set_hl(0, 'SignColumn', { clear })
 
 vim.opt.termguicolors = true
+
+vim.o.mousescroll = 'ver:25,hor:6' -- Customize mouse scroll
+vim.o.switchbuf = 'usetab' -- Use already opened buffers when switching
+
+-- UI =========================================================================
+vim.o.breakindent = true -- Indent wrapped lines to match line start
+vim.o.breakindentopt = 'list:-1' -- Add padding for lists (if 'wrap' is set)
+vim.o.list = true -- Show helpful text indicators
+vim.o.number = true -- Show line numbers
+vim.o.pumborder = 'single' -- Use border in popup menu
+vim.o.pumheight = 10 -- Make popup menu smaller
+vim.o.pummaxwidth = 100 -- Make popup menu not too wide
+vim.o.ruler = false -- Don't show cursor coordinates
+vim.o.shortmess = 'CFOSWaco' -- Disable some built-in completion messages
+vim.o.showmode = false -- Don't show mode in command line
+vim.o.signcolumn = 'yes' -- Always show signcolumn (less flicker)
+vim.o.splitbelow = true -- Horizontal splits will be below
+vim.o.splitkeep = 'screen' -- Reduce scroll during window split
+vim.o.splitright = true -- Vertical splits will be to the right
+vim.o.winborder = 'single' -- Use border in floating windows
+vim.o.wrap = false -- Don't visually wrap lines (toggle with \w)
+
+-- Editing ====================================================================
+vim.o.autoindent = true -- Use auto indent
+vim.o.expandtab = true -- Convert tabs to spaces
+vim.o.formatoptions = 'rqnl1j' -- Improve comment editing
+vim.o.ignorecase = true -- Ignore case during search
+vim.o.incsearch = true -- Show search matches while typing
+vim.o.infercase = true -- Infer case in built-in completion
+vim.o.smartcase = true -- Respect case if search pattern has upper case
+vim.o.smartindent = true -- Make indenting smart
+vim.o.spelloptions = 'camel' -- Treat camelCase word parts as separate words
+vim.o.virtualedit = 'block' -- Allow going past end of line in blockwise mode
+
+vim.o.iskeyword = '@,48-57,_,192-255,-' -- Treat dash as `word` textobject part
+
+-- Pattern for a start of numbered list (used in `gw`). This reads as
+-- "Start of list item is: at least one special character (digit, -, +, *)
+-- possibly followed by punctuation (. or `)`) followed by at least one space".
+vim.o.formatlistpat = [[^\s*[0-9\-\+\*]\+[\.\)]*\s\+]]
+
+-- Built-in completion
+vim.o.complete = '.,w,b,kspell' -- Use less sources
+vim.o.completeopt = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
+vim.o.completetimeout = 100 -- Limit sources delay
 
 -- vim: ts=4 sts=4 sw=4 et

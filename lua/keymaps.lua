@@ -22,7 +22,6 @@ map('n', '<C-Right>', '<C-w>>', { desc = 'Increase window width' })
 
 -- Yank / delete to system
 map({ 'n', 'x' }, '<leader>y', '"+y', { desc = 'which_key_ignore' })
-map({ 'n', 'x' }, '<leader>D', '"+d', { desc = 'which_key_ignore' })
 map({ 'v', 'x', 'n' }, '<C-y>', '"+y', { desc = 'which_key_ignore' })
 
 -- File save / quit / source
@@ -78,7 +77,7 @@ map('n', '<leader>e', '<Cmd>Yazi<CR>', { desc = 'Yazi (file dir)' })
 map('n', '<leader>E', '<Cmd>Yazi cwd<CR>', { desc = 'Yazi (cwd)' })
 -- map('n', '<leader>cw', '<Cmd>Yazi toggle<CR>', { desc = 'Yazi (resume)' })
 map('n', '\\', '<Cmd>Yazi<CR>', { desc = 'Yazi' })
-map('n', '<C-f>', '<Cmd>Open .<CR>', { desc = 'Open in OS Finder' })
+-- map('n', '<C-f>', '<Cmd>Open .<CR>', { desc = 'Open in OS Finder' })
 map('n', '<leader>a', ':edit #<CR>', { desc = 'Alternate file' })
 
 -- Diagnostics / quickfix
@@ -205,16 +204,16 @@ map('n', '<leader>mm', function()
 end, { desc = 'Menu' })
 map('n', '<leader>1', function()
   require('harpoon'):list():select(1)
-end, { desc = 'Harpoon file 1' })
+end, { desc = 'Harpoon 1' })
 map('n', '<leader>2', function()
   require('harpoon'):list():select(2)
-end, { desc = 'Harpoon file 2' })
+end, { desc = 'Harpoon 2' })
 map('n', '<leader>3', function()
   require('harpoon'):list():select(3)
-end, { desc = 'Harpoon file 3' })
+end, { desc = 'Harpoon 3' })
 map('n', '<leader>4', function()
   require('harpoon'):list():select(4)
-end, { desc = 'Harpoon file 4' })
+end, { desc = 'Harpoon 4' })
 
 -- ── terminal splits ─────────────────────────────
 
@@ -232,10 +231,10 @@ end
 
 map('n', '<leader>|', function()
   term_split('vertical', 50)
-end, { desc = 'Vertical terminal (50, cwd)' })
+end, { desc = 'V term' })
 map('n', '<leader>-', function()
   term_split('horizontal', 15)
-end, { desc = 'Horizontal terminal (15, cwd)' })
+end, { desc = 'H term' })
 
 -- ── Neotest / Jest (<leader>j) ──────────────────────────────────────────────
 local function nt()
@@ -323,7 +322,7 @@ map('n', '[c', function()
 end, { expr = true, desc = 'Jump to previous git change' })
 
 -- ── Conform format ──────────────────────────────────────────────────────────
-map('', '<leader>fm', function()
+map('', '<C-f>', function()
   require('conform').format { async = true, lsp_format = 'fallback' }
 end, { desc = '[F]ormat buffer' })
 
@@ -350,10 +349,10 @@ end, { desc = 'Executioner: create project' })
 -- ── ram.nvim (<leader>n / <leader>N) ────────────────────────────────────────
 map('n', '<leader>n', function()
   require('ram').global()
-end, { desc = 'Ram: global' })
+end, { desc = 'Global note' })
 map('n', '<leader>N', function()
   require('ram').project()
-end, { desc = 'Ram: project' })
+end, { desc = 'Project note' })
 
 -- ── Tailwind values (<Leader>cv) ────────────────────────────────────────────
 -- map('n', '<Leader>cv', '<CMD>TWValues<CR>', { desc = 'Tailwind CSS values' })
@@ -433,7 +432,7 @@ end, { desc = 'Treesitter Search' })
 -- ── Aerial symbol outline ───────────────────────────────────────────────────
 map('n', '<leader>so', '<cmd>AerialToggle!<cr>', { desc = 'Symbol Outline' })
 map('n', '<leader>sO', '<cmd>AerialNavToggle<cr>', { desc = 'Symbol Outline (nav)' })
-map('n', '<leader>ssy', '<cmd>Telescope aerial<cr>', { desc = 'Symbols (telescope)' })
+map('n', '<leader>sy', '<cmd>Telescope aerial<cr>', { desc = 'Symbols (telescope)' })
 map('n', ']]', '<cmd>AerialNext<cr>', { desc = 'Next symbol' })
 map('n', '[[', '<cmd>AerialPrev<cr>', { desc = 'Prev symbol' })
 
@@ -442,9 +441,6 @@ map('n', '<leader>sR', '<cmd>GrugFar<cr>', { desc = 'Find/Replace (project)' })
 map('x', '<leader>sR', function()
   require('grug-far').with_visual_selection { prefills = { paths = vim.fn.expand '%' } }
 end, { desc = 'Find/Replace (selection)' })
-
--- ── Claude Code (<leader>C) ─────────────────────────────────────────────────
-map('n', '<leader>C', '<cmd>ClaudeCode<CR>', { desc = 'Toggle Claude Code' })
 
 -- ── Hatch (<leader>i*) — file template hatcher ──────────────────────────────
 map('n', '<leader>ih', '<cmd>Hatch<cr>', { desc = 'Hatch: apply template' })
@@ -455,38 +451,38 @@ map('n', '<leader>iC', '<cmd>HatchCloneTemplates<cr>', { desc = 'Hatch: clone te
 local function dap()
   return require 'dap'
 end
-map('n', '<leader>dc', function()
+map('n', '<leader>bc', function()
   dap().continue()
 end, { desc = 'Debug: Start/Continue' })
-map('n', '<leader>di', function()
+map('n', '<leader>bi', function()
   dap().step_into()
 end, { desc = 'Debug: Step Into' })
-map('n', '<leader>dO', function()
+map('n', '<leader>bO', function()
   dap().step_over()
 end, { desc = 'Debug: Step Over' })
-map('n', '<leader>do', function()
+map('n', '<leader>bo', function()
   dap().step_out()
 end, { desc = 'Debug: Step Out' })
-map('n', '<leader>db', function()
+map('n', '<leader>bb', function()
   dap().toggle_breakpoint()
 end, { desc = 'Debug: Toggle Breakpoint' })
-map('n', '<leader>dB', function()
+map('n', '<leader>bB', function()
   dap().set_breakpoint(vim.fn.input 'Breakpoint condition: ')
 end, { desc = 'Debug: Set Breakpoint' })
-map('n', '<leader>dr', function()
+map('n', '<leader>br', function()
   require('dapui').toggle()
 end, { desc = 'Debug: See last session result.' })
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'python',
   callback = function(ev)
-    map('n', '<leader>dpt', function()
+    map('n', '<leader>bpt', function()
       require('dap-python').test_method()
     end, { buffer = ev.buf, desc = 'Debug Method' })
-    map('n', '<leader>dpc', function()
+    map('n', '<leader>bpc', function()
       require('dap-python').test_class()
     end, { buffer = ev.buf, desc = 'Debug Class' })
-    map('n', '<leader>dpv', '<cmd>:VenvSelect<cr>', { buffer = ev.buf, desc = 'Select VirtualEnv' })
+    map('n', '<leader>bpv', '<cmd>:VenvSelect<cr>', { buffer = ev.buf, desc = 'Select VirtualEnv' })
   end,
 })
 
