@@ -1,0 +1,33 @@
+{
+  "include quoted": {
+    "prefix": "inc",
+    "body": ["#include \"${1:header.h}\"$0"]
+  },
+  "include angled": {
+    "prefix": "inca",
+    "body": ["#include <${1:stdio.h}>$0"]
+  },
+  "include guard": {
+    "prefix": "guard",
+    "body": [
+      "#ifndef ${1:${TM_FILENAME_BASE/(.*)/${1:/upcase}/}}_H",
+      "#define $1_H",
+      "",
+      "$0",
+      "",
+      "#endif  // $1_H"
+    ]
+  },
+  "main function": {
+    "prefix": "main",
+    "body": ["int main(int argc, char **argv)", "{", "    (void)argc; (void)argv;", "    $0", "    return 0;", "}"]
+  },
+  "for index": {
+    "prefix": "fori",
+    "body": ["for (${1:size_t} ${2:i} = 0; $2 < ${3:n}; ++$2)", "{", "    $0", "}"]
+  },
+  "struct typedef": {
+    "prefix": "structt",
+    "body": ["typedef struct ${1:name}", "{", "    $0", "} $1;"]
+  }
+}

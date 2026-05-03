@@ -25,7 +25,6 @@ return {
           },
         },
 
-        vim.keymap.set('n', '<leader>C', '<cmd>ClaudeCode<CR>', { desc = 'Toggle Claude Code' }),
       }
     end,
   },

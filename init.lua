@@ -1,5 +1,15 @@
 vim.deprecate = function() end
 
+do
+  local orig_notify = vim.notify
+  vim.notify = function(msg, level, opts)
+    if type(msg) == 'string' and msg:find("BufModifiedSet", 1, true) then
+      return
+    end
+    return orig_notify(msg, level, opts)
+  end
+end
+
 -- Set <space> as the leader key
 
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)

@@ -44,11 +44,9 @@ return {
 
   {
     'MaximilianLloyd/tw-values.nvim',
-    keys = {
-      { '<Leader>cv', '<CMD>TWValues<CR>', desc = 'Tailwind CSS values' },
-    },
+    cmd = { 'TWValues' },
     opts = {
-      show_unknown_classes = true, -- Shows the unknown classes popup
+      show_unknown_classes = true,
     },
   },
   {
@@ -77,120 +75,7 @@ return {
 
   {
     'monaqa/dial.nvim',
-    keys = {
-      {
-        '<C-a>',
-        function()
-          require('dial.map').manipulate('increment', 'normal')
-        end,
-        mode = 'n',
-      },
-      {
-        '<C-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'normal')
-        end,
-        mode = 'n',
-      },
-      {
-        'g<C-a>',
-        function()
-          require('dial.map').manipulate('increment', 'gnormal')
-        end,
-        mode = 'n',
-      },
-      {
-        'g<C-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'gnormal')
-        end,
-        mode = 'n',
-      },
-      {
-        '<C-a>',
-        function()
-          require('dial.map').manipulate('increment', 'visual')
-        end,
-        mode = 'x',
-      },
-      {
-        '<C-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'visual')
-        end,
-        mode = 'x',
-      },
-      {
-        'g<C-a>',
-        function()
-          require('dial.map').manipulate('increment', 'gvisual')
-        end,
-        mode = 'x',
-      },
-      {
-        'g<C-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'gvisual')
-        end,
-        mode = 'x',
-      },
-      {
-        '<D-a>',
-        function()
-          require('dial.map').manipulate('increment', 'normal')
-        end,
-        mode = 'n',
-      },
-      {
-        '<D-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'normal')
-        end,
-        mode = 'n',
-      },
-      {
-        'g<D-a>',
-        function()
-          require('dial.map').manipulate('increment', 'gnormal')
-        end,
-        mode = 'n',
-      },
-      {
-        'g<D-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'gnormal')
-        end,
-        mode = 'n',
-      },
-      {
-        '<D-a>',
-        function()
-          require('dial.map').manipulate('increment', 'visual')
-        end,
-        mode = 'x',
-      },
-      {
-        '<D-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'visual')
-        end,
-        mode = 'x',
-      },
-      {
-        'g<D-a>',
-        function()
-          require('dial.map').manipulate('increment', 'gvisual')
-        end,
-        mode = 'x',
-      },
-      {
-        'g<D-x>',
-        function()
-          require('dial.map').manipulate('decrement', 'gvisual')
-        end,
-        mode = 'x',
-      },
-    },
+    event = 'VeryLazy',
     config = function()
       local augend = require 'dial.augend'
       require('dial.config').augends:register_group {

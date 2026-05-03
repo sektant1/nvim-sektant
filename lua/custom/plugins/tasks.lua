@@ -185,111 +185,83 @@ return {
       })
     end
 
-    -- ── Keymaps ──────────────────────────────────────────────────────────
-    -- Configure / build
-    vim.keymap.set('n', '<leader>cc', task 'Task start cmake configure', { desc = 'CMake: configure' })
-    vim.keymap.set('n', '<leader>cb', task 'Task start cmake build_all', { desc = 'CMake: build all' })
-    vim.keymap.set('n', '<leader>cB', task 'Task set_module_param cmake build_type', { desc = 'CMake: set build type' })
-
-    -- Run / debug
-    vim.keymap.set('n', '<leader>ce', pick_exe, { desc = 'CMake: pick & run executable' })
-    vim.keymap.set('n', '<leader>cr', build_and_run, { desc = 'CMake: build all + run last exe' })
-
-    -- Tests
-    vim.keymap.set('n', '<leader>ct', task 'Task start cmake ctest', { desc = 'CMake: ctest' })
-    vim.keymap.set('n', '<leader>cT', task 'Task start cmake test', { desc = 'CMake: build tests + ctest' })
-
-    -- Params
-    vim.keymap.set('n', '<leader>cs', task 'Task set_module_param cmake target', { desc = 'CMake: select target' })
-    vim.keymap.set('n', '<leader>ck', task 'Task set_module_param cmake build_kit', { desc = 'CMake: select kit' })
-
-    -- ccmake TUI
-    vim.keymap.set('n', '<leader>cC', function()
-      cmake_root()
-      local build_dir = tostring(require('tasks.cmake_utils.cmake_utils').getBuildDir())
-      vim.cmd('botright split | terminal ccmake ' .. vim.fn.fnameescape(build_dir))
-    end, { desc = 'CMake: ccmake TUI' })
-
-    vim.keymap.set('n', '<C-c>', task 'Task cancel', { desc = 'Task: cancel' })
-
-    -- ── Profiling / analysis ──────────────────────────────────────────────
-    -- All tools operate on `last_exe` (set by <leader>ce picker).
-
+    -- ── Profiling helpers ─────────────────────────────────────────────────
     local function need_exe(tool)
-      if last_exe then
-        return true
-      end
+      if last_exe then return true end
       vim.notify(tool .. ': pick an executable first with <leader>ce', vim.log.levels.WARN)
       return false
     end
 
-    -- valgrind memcheck — memory leaks, invalid reads/writes
-    vim.keymap.set('n', '<leader>pm', function()
+    local function profile_valgrind()
       if not need_exe 'valgrind' then return end
       vim.cmd(
         'botright split | terminal valgrind'
-          .. ' --leak-check=full'
-          .. ' --track-origins=yes'
-          .. ' --show-leak-kinds=all'
-          .. ' --error-exitcode=1'
+          .. ' --leak-check=full --track-origins=yes --show-leak-kinds=all --error-exitcode=1'
           .. ' ' .. vim.fn.fnameescape(last_exe)
       )
-    end, { desc = 'Profile: valgrind memcheck' })
+    end
 
-    -- valgrind callgrind — CPU call-graph profiling, open with kcachegrind
-    vim.keymap.set('n', '<leader>pc', function()
+    local function profile_callgrind()
       if not need_exe 'callgrind' then return end
       local out = '/tmp/callgrind.' .. os.time() .. '.out'
       vim.cmd(
-        'botright split | terminal valgrind'
-          .. ' --tool=callgrind'
-          .. ' --callgrind-out-file=' .. out
+        'botright split | terminal valgrind --tool=callgrind --callgrind-out-file=' .. out
           .. ' ' .. vim.fn.fnameescape(last_exe)
-          .. ' ; echo ""'
-          .. ' ; echo "Done. Open with: kcachegrind ' .. out .. '"'
+          .. ' ; echo "" ; echo "Done. Open with: kcachegrind ' .. out .. '"'
       )
-    end, { desc = 'Profile: callgrind CPU (open with kcachegrind)' })
+    end
 
-    -- perf — Linux kernel profiler, near-zero overhead
-    vim.keymap.set('n', '<leader>pp', function()
+    local function profile_perf()
       if not need_exe 'perf' then return end
       vim.cmd(
         'botright split | terminal perf record -g -o /tmp/perf.data'
           .. ' ' .. vim.fn.fnameescape(last_exe)
           .. ' && perf report -i /tmp/perf.data'
       )
-    end, { desc = 'Profile: perf record + report' })
+    end
 
-    -- RenderDoc — frame capture for OpenGL/Vulkan, opens in qrenderdoc GUI
-    vim.keymap.set('n', '<leader>pr', function()
+    local function profile_renderdoc()
       if not need_exe 'renderdoccmd' then return end
       local cap = '/tmp/renderdoc_' .. os.time()
       vim.cmd(
-        'botright split | terminal renderdoccmd capture'
-          .. ' --wait-for-exit'
-          .. ' --capture-file ' .. cap
+        'botright split | terminal renderdoccmd capture --wait-for-exit --capture-file ' .. cap
           .. ' ' .. vim.fn.fnameescape(last_exe)
-          .. ' ; echo ""'
-          .. ' ; echo "Capture saved to ' .. cap .. '.rdc — open with: qrenderdoc ' .. cap .. '.rdc"'
+          .. ' ; echo "" ; echo "Capture saved to ' .. cap .. '.rdc — open with: qrenderdoc ' .. cap .. '.rdc"'
       )
-    end, { desc = 'Profile: RenderDoc frame capture' })
+    end
 
-    -- Open RenderDoc GUI (to replay a .rdc file manually)
-    vim.keymap.set('n', '<leader>pR', function()
+    local function profile_renderdoc_gui()
       vim.cmd 'botright split | terminal qrenderdoc'
-    end, { desc = 'Profile: open RenderDoc GUI' })
+    end
 
-    -- heaptrack — heap memory profiler with GUI (lighter than valgrind)
-    vim.keymap.set('n', '<leader>ph', function()
+    local function profile_heaptrack()
       if not need_exe 'heaptrack' then return end
       local out = '/tmp/heaptrack_' .. os.time()
       vim.cmd(
-        'botright split | terminal heaptrack'
-          .. ' -o ' .. out
+        'botright split | terminal heaptrack -o ' .. out
           .. ' ' .. vim.fn.fnameescape(last_exe)
-          .. ' ; echo ""'
-          .. ' ; echo "Done. Open with: heaptrack_gui ' .. out .. '.zst"'
+          .. ' ; echo "" ; echo "Done. Open with: heaptrack_gui ' .. out .. '.zst"'
       )
-    end, { desc = 'Profile: heaptrack (heap profiler)' })
+    end
+
+    local function ccmake_tui()
+      cmake_root()
+      local build_dir = tostring(require('tasks.cmake_utils.cmake_utils').getBuildDir())
+      vim.cmd('botright split | terminal ccmake ' .. vim.fn.fnameescape(build_dir))
+    end
+
+    -- Expose to global keymap file (lua/keymaps.lua)
+    _G.NvimTasks = {
+      task = task,
+      pick_exe = pick_exe,
+      build_and_run = build_and_run,
+      ccmake_tui = ccmake_tui,
+      profile_valgrind = profile_valgrind,
+      profile_callgrind = profile_callgrind,
+      profile_perf = profile_perf,
+      profile_renderdoc = profile_renderdoc,
+      profile_renderdoc_gui = profile_renderdoc_gui,
+      profile_heaptrack = profile_heaptrack,
+    }
   end,
 }

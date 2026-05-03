@@ -1,0 +1,215 @@
+{
+  "pragma once": {
+    "prefix": "pragma",
+    "body": ["#pragma once", "", "$0"]
+  },
+  "include quoted": {
+    "prefix": "inc",
+    "body": ["#include \"${1:header.h}\"$0"]
+  },
+  "include angled": {
+    "prefix": "inca",
+    "body": ["#include <${1:header}>$0"]
+  },
+  "namespace mnd block": {
+    "prefix": "nsmnd",
+    "body": ["namespace mnd", "{", "", "$0", "", "}  // namespace mnd"]
+  },
+  "namespace block": {
+    "prefix": "ns",
+    "body": ["namespace ${1:name}", "{", "", "$0", "", "}  // namespace $1"]
+  },
+  "header skeleton (mnd)": {
+    "prefix": "mndh",
+    "description": "monad-engine header skeleton",
+    "body": [
+      "#pragma once",
+      "",
+      "namespace mnd",
+      "{",
+      "",
+      "class ${1:${TM_FILENAME_BASE}}",
+      "{",
+      "public:",
+      "    $1();",
+      "    ~$1();",
+      "",
+      "    $0",
+      "",
+      "private:",
+      "};",
+      "",
+      "}  // namespace mnd"
+    ]
+  },
+  "source skeleton (mnd)": {
+    "prefix": "mndcpp",
+    "description": "monad-engine source skeleton",
+    "body": [
+      "#include \"${1:${TM_FILENAME_BASE}}.h\"",
+      "",
+      "#include \"Log.h\"",
+      "",
+      "namespace mnd",
+      "{",
+      "",
+      "$1::$1()",
+      "{",
+      "    $0",
+      "}",
+      "",
+      "$1::~$1() = default;",
+      "",
+      "}  // namespace mnd"
+    ]
+  },
+  "class with virtual dtor": {
+    "prefix": "classv",
+    "body": [
+      "class ${1:Name}",
+      "{",
+      "public:",
+      "    $1();",
+      "    virtual ~$1();",
+      "",
+      "    $0",
+      "",
+      "private:",
+      "};"
+    ]
+  },
+  "class plain": {
+    "prefix": "class",
+    "body": [
+      "class ${1:Name}",
+      "{",
+      "public:",
+      "    $1();",
+      "    ~$1();",
+      "",
+      "    $0",
+      "",
+      "private:",
+      "};"
+    ]
+  },
+  "struct": {
+    "prefix": "struct",
+    "body": ["struct ${1:Name}", "{", "    $0", "};"]
+  },
+  "method definition": {
+    "prefix": "mdef",
+    "description": "out-of-line class method",
+    "body": [
+      "${1:void} ${2:ClassName}::${3:MethodName}(${4})",
+      "{",
+      "    $0",
+      "}"
+    ]
+  },
+  "member variable (m_)": {
+    "prefix": "mvar",
+    "body": ["${1:Type} m_${2:name}${3: = ${4:{}\\}};$0"]
+  },
+  "k constant": {
+    "prefix": "kconst",
+    "body": ["constexpr ${1:int} k${2:Name} = ${3:0};$0"]
+  },
+  "LOG_INFO": {
+    "prefix": "loginfo",
+    "body": ["LOG_INFO(\"${1:msg}\"${2:, $3});$0"]
+  },
+  "LOG_WARN": {
+    "prefix": "logwarn",
+    "body": ["LOG_WARN(\"${1:msg}\"${2:, $3});$0"]
+  },
+  "LOG_ERROR": {
+    "prefix": "logerror",
+    "body": ["LOG_ERROR(\"${1:msg}\"${2:, $3});$0"]
+  },
+  "shared_ptr": {
+    "prefix": "sptr",
+    "body": ["std::shared_ptr<${1:T}>$0"]
+  },
+  "make_shared": {
+    "prefix": "msh",
+    "body": ["std::make_shared<${1:T}>(${2})$0"]
+  },
+  "unique_ptr": {
+    "prefix": "uptr",
+    "body": ["std::unique_ptr<${1:T}>$0"]
+  },
+  "make_unique": {
+    "prefix": "muq",
+    "body": ["std::make_unique<${1:T}>(${2})$0"]
+  },
+  "nullptr guard": {
+    "prefix": "ifnull",
+    "body": [
+      "if (${1:ptr})",
+      "{",
+      "    $0",
+      "} else",
+      "{",
+      "    LOG_WARN(\"${2:$1 was nullptr}\");",
+      "}"
+    ]
+  },
+  "for range": {
+    "prefix": "forr",
+    "body": ["for (${1:const auto&} ${2:item} : ${3:container})", "{", "    $0", "}"]
+  },
+  "for index": {
+    "prefix": "fori",
+    "body": ["for (${1:size_t} ${2:i} = 0; $2 < ${3:n}; ++$2)", "{", "    $0", "}"]
+  },
+  "GLSL vertex source (raw string)": {
+    "prefix": "glslv",
+    "body": [
+      "std::string ${1:vertexShaderSource} = R\"(",
+      "    #version 330 core",
+      "    layout(location = 0) in vec3 position;",
+      "",
+      "    uniform mat4 uModel;",
+      "    uniform mat4 uProjection;",
+      "    uniform mat4 uView;",
+      "",
+      "    void main()",
+      "    {",
+      "        gl_Position = uProjection * uView * uModel * vec4(position, 1.0);",
+      "        $0",
+      "    }",
+      ")\";"
+    ]
+  },
+  "GLSL fragment source (raw string)": {
+    "prefix": "glslf",
+    "body": [
+      "std::string ${1:fragmentShaderSource} = R\"(",
+      "    #version 330 core",
+      "",
+      "    out vec4 FragColor;",
+      "",
+      "    void main()",
+      "    {",
+      "        FragColor = vec4(${2:1.0, 1.0, 1.0, 1.0});",
+      "        $0",
+      "    }",
+      ")\";"
+    ]
+  },
+  "main function": {
+    "prefix": "main",
+    "body": ["int main(int argc, char **argv)", "{", "    (void)argc; (void)argv;", "    $0", "    return 0;", "}"]
+  },
+  "Init method (mnd)": {
+    "prefix": "initm",
+    "body": [
+      "bool ${1:ClassName}::Init()",
+      "{",
+      "    $0",
+      "    return true;",
+      "}"
+    ]
+  }
+}

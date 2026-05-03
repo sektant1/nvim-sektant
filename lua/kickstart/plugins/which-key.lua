@@ -27,7 +27,7 @@ return {
         { '<leader>l', group = 'LSP' },
         { '<leader>t', group = 'Toggles' },
         { '<leader>g', group = 'Git', mode = { 'n', 'v' } },
-        { '<leader>p', group = 'Profile' },
+        { '<leader>p', group = 'Valgrind' },
         { '<leader>m', group = 'Harpoon' },
         { '<leader>j', group = 'Test' },
       },

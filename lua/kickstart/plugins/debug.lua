@@ -27,75 +27,7 @@ return {
       -- Add your own debuggers here
       'leoluz/nvim-dap-go',
     },
-    keys = {
-      -- Basic debugging keymaps, feel free to change to your liking!
-      {
-        '<leader>bc',
-        function()
-          require('dap').continue()
-        end,
-        desc = 'Debug: Start/Continue',
-      },
-      {
-        '<leader>bi',
-        function()
-          require('dap').step_into()
-        end,
-        desc = 'Debug: Step Into',
-      },
-      {
-        '<leader>bO',
-        function()
-          require('dap').step_over()
-        end,
-        desc = 'Debug: Step Over',
-      },
-      {
-        '<leader>bo',
-        function()
-          require('dap').step_out()
-        end,
-        desc = 'Debug: Step Out',
-      },
-      {
-        '<leader>bb',
-        function()
-          require('dap').toggle_breakpoint()
-        end,
-        desc = 'Debug: Toggle Breakpoint',
-      },
-      {
-        '<leader>bB',
-        function()
-          require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
-        end,
-        desc = 'Debug: Set Breakpoint',
-      },
-      -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-      {
-        '<leader>br',
-        function()
-          require('dapui').toggle()
-        end,
-        desc = 'Debug: See last session result.',
-      },
-      {
-        '<leader>bpt',
-        function()
-          require('dap-python').test_method()
-        end,
-        desc = 'Debug Method',
-        ft = 'python',
-      },
-      {
-        '<leader>bpc',
-        function()
-          require('dap-python').test_class()
-        end,
-        desc = 'Debug Class',
-        ft = 'python',
-      },
-    },
+    event = 'VeryLazy',
     config = function()
       local dap = require 'dap'
       local dapui = require 'dapui'
@@ -426,6 +358,5 @@ return {
     },
     --  Call config for Python files and load the cached venv automatically
     ft = 'python',
-    keys = { { '<leader>bpv', '<cmd>:VenvSelect<cr>', desc = 'Select VirtualEnv', ft = 'python' } },
   },
 }
