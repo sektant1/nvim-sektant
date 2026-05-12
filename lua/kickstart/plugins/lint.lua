@@ -46,6 +46,24 @@ return {
       -- Create autocommand which carries out the actual linting
       -- on the specified events.
       local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
+      local function available_linters_for_buffer()
+        local names = lint.linters_by_ft[vim.bo.filetype]
+        if not names then
+          return nil
+        end
+
+        local available = {}
+        for _, name in ipairs(names) do
+          local linter = lint.linters[name]
+          local cmd = linter and linter.cmd
+          if type(cmd) ~= 'string' or vim.fn.executable(cmd) == 1 then
+            table.insert(available, name)
+          end
+        end
+
+        return available
+      end
+
       vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
         group = lint_augroup,
         callback = function()
@@ -53,7 +71,7 @@ return {
           -- avoid superfluous noise, notably within the handy LSP pop-ups that
           -- describe the hovered symbol using Markdown.
           if vim.bo.modifiable then
-            lint.try_lint()
+            lint.try_lint(available_linters_for_buffer())
           end
         end,
       })
