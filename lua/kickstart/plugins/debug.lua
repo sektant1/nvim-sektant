@@ -147,7 +147,45 @@ return {
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
       dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-      require('dap-python').setup 'debugpy-adapter'
+      local python = require 'custom.python'
+      require('dap-python').setup(python.python_path())
+      require('dap-python').test_runner = 'pytest'
+      dap.configurations.python = vim.list_extend(dap.configurations.python or {}, {
+        {
+          type = 'python',
+          request = 'launch',
+          name = 'Python: Current file',
+          program = '${file}',
+          cwd = function()
+            return python.root()
+          end,
+          console = 'integratedTerminal',
+          justMyCode = false,
+        },
+        {
+          type = 'python',
+          request = 'launch',
+          name = 'Python: Module',
+          module = function()
+            return vim.fn.input 'Module: '
+          end,
+          cwd = function()
+            return python.root()
+          end,
+          console = 'integratedTerminal',
+          justMyCode = false,
+        },
+        {
+          type = 'python',
+          request = 'attach',
+          name = 'Python: Attach debugpy',
+          connect = {
+            host = '127.0.0.1',
+            port = 5678,
+          },
+          justMyCode = false,
+        },
+      })
       -- Install golang specific config
       require('dap-go').setup {
         delve = {
@@ -224,6 +262,7 @@ return {
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
       'marilari88/neotest-jest',
+      'nvim-neotest/neotest-python',
       'm00qek/baleia.nvim',
     },
     config = function()
@@ -291,6 +330,16 @@ return {
               return vim.fn.getcwd()
             end,
             env = { CI = false },
+          },
+          require 'neotest-python' {
+            dap = {
+              justMyCode = false,
+              console = 'integratedTerminal',
+            },
+            python = function()
+              return require('custom.python').python_path()
+            end,
+            runner = 'pytest',
           },
         },
         summary = { enabled = true },

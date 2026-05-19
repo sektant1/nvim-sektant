@@ -1,0 +1,12 @@
+vim.opt_local.breakindent = true
+vim.opt_local.conceallevel = 2
+vim.opt_local.concealcursor = 'nc'
+vim.opt_local.expandtab = true
+vim.opt_local.foldenable = true
+vim.opt_local.foldlevel = 2
+vim.opt_local.linebreak = true
+vim.opt_local.shiftwidth = 2
+vim.opt_local.spell = true
+vim.opt_local.tabstop = 2
+vim.opt_local.textwidth = 100
+vim.opt_local.wrap = true

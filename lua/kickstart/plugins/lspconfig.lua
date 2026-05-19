@@ -114,7 +114,20 @@ return {
           cmd = require('tasks.cmake_utils.cmake_utils').currentClangdArgs(),
         },
         -- gopls = {},
-        pyright = {},
+        pyright = {
+          before_init = function(_, config)
+            local python = require 'custom.python'
+            local root = config.root_dir or python.root()
+            config.settings = vim.tbl_deep_extend('force', config.settings or {}, python.pyright_settings(root))
+          end,
+        },
+        ruff = {
+          init_options = {
+            settings = {
+              organizeImports = true,
+            },
+          },
+        },
         jsonls = {
           settings = {
             json = {
@@ -170,6 +183,9 @@ return {
         'cmakelang',
         'ts_ls',
         'ruff',
+        'black',
+        'debugpy',
+        'pyright',
         'bash-language-server',
         'neocmakelsp',
         'css-lsp',

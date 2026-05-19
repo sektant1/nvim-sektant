@@ -354,6 +354,78 @@ map('n', '<leader>N', function()
   require('ram').project()
 end, { desc = 'Project note' })
 
+-- ── Vimwiki (<leader>v) ─────────────────────────────────────────────────────
+local function wiki_root()
+  return vim.fn.expand(vim.env.VIMWIKI_HOME or '~/vimwiki')
+end
+
+local function ensure_wiki_root()
+  vim.fn.mkdir(wiki_root(), 'p')
+end
+
+local function wiki_cmd(command)
+  return function()
+    ensure_wiki_root()
+    vim.cmd(command)
+  end
+end
+
+local function wiki_new_page()
+  ensure_wiki_root()
+
+  local title = vim.fn.input 'Wiki page: '
+  title = title:gsub('^%s+', ''):gsub('%s+$', '')
+
+  if title == '' then
+    return
+  end
+
+  local slug = title
+    :lower()
+    :gsub('%s+', '-')
+    :gsub('[\\/:%*%?"<>|]', '-')
+    :gsub('%-+', '-')
+    :gsub('^%-', '')
+    :gsub('%-$', '')
+
+  if slug == '' then
+    vim.notify('Invalid wiki page name: ' .. title, vim.log.levels.WARN)
+    return
+  end
+
+  vim.cmd('edit ' .. vim.fn.fnameescape(wiki_root() .. '/' .. slug .. '.md'))
+
+  if vim.api.nvim_buf_get_lines(0, 0, 1, false)[1] == '' then
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, { '# ' .. title, '' })
+  end
+end
+
+map('n', '<leader>vi', wiki_cmd 'VimwikiIndex', { desc = 'Wiki index' })
+map('n', '<leader>vI', wiki_cmd 'VimwikiTabIndex', { desc = 'Wiki index tab' })
+map('n', '<leader>vs', wiki_cmd 'VimwikiUISelect', { desc = 'Wiki select' })
+map('n', '<leader>vn', wiki_new_page, { desc = 'Wiki new page' })
+map('n', '<leader>vd', wiki_cmd 'VimwikiMakeDiaryNote', { desc = 'Wiki diary today' })
+map('n', '<leader>vD', wiki_cmd 'VimwikiDiaryIndex', { desc = 'Wiki diary index' })
+map('n', '<leader>vy', wiki_cmd 'VimwikiMakeYesterdayDiaryNote', { desc = 'Wiki diary yesterday' })
+map('n', '<leader>vM', wiki_cmd 'VimwikiMakeTomorrowDiaryNote', { desc = 'Wiki diary tomorrow' })
+map('n', '<leader>vb', wiki_cmd 'VimwikiBacklinks', { desc = 'Wiki backlinks' })
+map('n', '<leader>vl', wiki_cmd 'VimwikiGenerateLinks', { desc = 'Wiki generate links' })
+map('n', '<leader>vR', wiki_cmd 'VimwikiRebuildTags', { desc = 'Wiki rebuild tags' })
+map('n', '<leader>vr', wiki_cmd 'VimwikiRenameLink', { desc = 'Wiki rename page' })
+map('n', '<leader>vx', wiki_cmd 'VimwikiDeleteLink', { desc = 'Wiki delete page' })
+map('n', '<leader>vt', wiki_cmd 'VimwikiTOC', { desc = 'Wiki table of contents' })
+map('n', '<leader>vT', wiki_cmd 'VimwikiTags', { desc = 'Wiki tags' })
+map('n', '<leader>vh', wiki_cmd 'Vimwiki2HTML', { desc = 'Wiki page to HTML' })
+map('n', '<leader>vH', wiki_cmd 'VimwikiAll2HTML', { desc = 'Wiki all to HTML' })
+map('n', '<leader>vf', function()
+  ensure_wiki_root()
+  tb().find_files { cwd = wiki_root(), prompt_title = 'Wiki Files' }
+end, { desc = 'Wiki files' })
+map('n', '<leader>vg', function()
+  ensure_wiki_root()
+  tb().live_grep { cwd = wiki_root(), prompt_title = 'Wiki Grep' }
+end, { desc = 'Wiki grep' })
+
 -- ── Tailwind values (<Leader>cv) ────────────────────────────────────────────
 -- map('n', '<Leader>cv', '<CMD>TWValues<CR>', { desc = 'Tailwind CSS values' })
 
@@ -476,13 +548,28 @@ end, { desc = 'Debug: See last session result.' })
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'python',
   callback = function(ev)
+    local py = require 'custom.python'
+    map('n', '<F8>', py.run_file, { buffer = ev.buf, desc = 'Python: run file' })
+    map('n', '<leader>pr', py.run_file, { buffer = ev.buf, desc = 'Python: run file' })
+    map('x', '<leader>pr', py.run_selection, { buffer = ev.buf, desc = 'Python: run selection' })
+    map('n', '<leader>pt', py.test_under_cursor, { buffer = ev.buf, desc = 'Python: test under cursor' })
+    map('n', '<leader>pn', py.test_nearest, { buffer = ev.buf, desc = 'Python: nearest test' })
+    map('n', '<leader>pf', py.test_file, { buffer = ev.buf, desc = 'Python: test file' })
+    map('n', '<leader>pl', py.test_last, { buffer = ev.buf, desc = 'Python: last test' })
+    map('n', '<leader>pd', py.debug_nearest_test, { buffer = ev.buf, desc = 'Python: debug nearest test' })
+    map('n', '<leader>pc', py.create_venv, { buffer = ev.buf, desc = 'Python: create .venv' })
+    map('n', '<leader>ps', py.sync_dependencies, { buffer = ev.buf, desc = 'Python: sync dependencies' })
+    map('n', '<leader>pa', py.add_dependency, { buffer = ev.buf, desc = 'Python: add dependency' })
+    map('n', '<leader>px', py.remove_dependency, { buffer = ev.buf, desc = 'Python: remove dependency' })
+    map('n', '<leader>pi', py.install_current_project, { buffer = ev.buf, desc = 'Python: install editable' })
+    map('n', '<leader>pv', '<cmd>:VenvSelect<cr>', { buffer = ev.buf, desc = 'Python: select virtualenv' })
     map('n', '<leader>bpt', function()
       require('dap-python').test_method()
-    end, { buffer = ev.buf, desc = 'Debug Method' })
+    end, { buffer = ev.buf, desc = 'Python: debug method' })
     map('n', '<leader>bpc', function()
       require('dap-python').test_class()
-    end, { buffer = ev.buf, desc = 'Debug Class' })
-    map('n', '<leader>bpv', '<cmd>:VenvSelect<cr>', { buffer = ev.buf, desc = 'Select VirtualEnv' })
+    end, { buffer = ev.buf, desc = 'Python: debug class' })
+    map('n', '<leader>bpv', '<cmd>:VenvSelect<cr>', { buffer = ev.buf, desc = 'Python: select virtualenv' })
   end,
 })
 

@@ -31,6 +31,12 @@ return {
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
+      if vim.lsp.buf_get_clients == nil then
+        vim.lsp.buf_get_clients = function(bufnr)
+          return vim.lsp.get_clients { bufnr = bufnr }
+        end
+      end
+
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
