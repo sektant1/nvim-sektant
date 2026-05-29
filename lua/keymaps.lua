@@ -73,10 +73,10 @@ map('n', '<M-t>', function()
 end)
 
 -- File managers / OS
-map('n', '<leader>e', '<Cmd>Yazi<CR>', { desc = 'Yazi (file dir)' })
-map('n', '<leader>E', '<Cmd>Yazi cwd<CR>', { desc = 'Yazi (cwd)' })
+map('n', '<leader>e', '<Cmd>Oil<CR>', { desc = 'Oil' })
+map('n', '<leader>E', '<Cmd>Oil .<CR>', { desc = 'Oil (cwd)' })
 -- map('n', '<leader>cw', '<Cmd>Yazi toggle<CR>', { desc = 'Yazi (resume)' })
-map('n', '\\', '<Cmd>Yazi<CR>', { desc = 'Yazi' })
+map('n', '\\', '<Cmd>Oil<CR>', { desc = 'Oil' })
 -- map('n', '<C-f>', '<Cmd>Open .<CR>', { desc = 'Open in OS Finder' })
 map('n', '<leader>a', ':edit #<CR>', { desc = 'Alternate file' })
 
@@ -549,8 +549,9 @@ vim.api.nvim_create_autocmd('FileType', {
   pattern = 'python',
   callback = function(ev)
     local py = require 'custom.python'
-    map('n', '<F8>', py.run_file, { buffer = ev.buf, desc = 'Python: run file' })
-    map('n', '<leader>pr', py.run_file, { buffer = ev.buf, desc = 'Python: run file' })
+    map('n', '<F8>', py.run_file, { buffer = ev.buf, desc = 'Python: run file with args' })
+    map('n', '<leader>pr', py.run_file, { buffer = ev.buf, desc = 'Python: run file with args' })
+    map('n', '<leader>pR', py.run_file_with_args_pythonpath, { buffer = ev.buf, desc = 'Python: run file with args + custom PYTHONPATH' })
     map('x', '<leader>pr', py.run_selection, { buffer = ev.buf, desc = 'Python: run selection' })
     map('n', '<leader>pt', py.test_under_cursor, { buffer = ev.buf, desc = 'Python: test under cursor' })
     map('n', '<leader>pn', py.test_nearest, { buffer = ev.buf, desc = 'Python: nearest test' })

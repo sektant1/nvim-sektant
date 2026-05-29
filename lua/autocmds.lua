@@ -36,3 +36,9 @@ end
 vim.api.nvim_command [[
     autocmd ModeChanged * lua leave_snippet()
 ]]
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    vim.cmd [[call chansend(v:stderr, "\x1b[<1u")]]
+  end,
+})

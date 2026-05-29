@@ -127,14 +127,72 @@ function M.open_term(cmd, opts)
   vim.cmd 'startinsert'
 end
 
-function M.run_file()
+local function prompt_input(title, default, on_submit)
+  default = default or ''
+
+  local ok, Input = pcall(require, 'nui.input')
+  if not ok then
+    vim.ui.input({ prompt = title .. ': ', default = default }, function(value)
+      if value ~= nil then
+        on_submit(value)
+      end
+    end)
+    return
+  end
+
+  local input
+  input = Input({
+    position = '50%',
+    size = { width = 60 },
+    border = {
+      style = 'single',
+      text = { top = ' ' .. title .. ' ', top_align = 'left' },
+    },
+  }, {
+    prompt = '> ',
+    default_value = default,
+    on_submit = function(value)
+      on_submit(value or '')
+    end,
+  })
+
+  input:mount()
+  input:map({ 'n', 'i' }, '<Esc>', function()
+    input:unmount()
+  end, { noremap = true })
+end
+
+local function run_file_command(args, pythonpath)
   vim.cmd 'write'
   local file = vim.api.nvim_buf_get_name(0)
   if file == '' then
     return
   end
+
   local root = M.root(file)
-  M.open_term(M.project_command(root, { file }), { cwd = root, size = 15 })
+  local cmd = M.project_command(root, { file })
+  if args and args ~= '' then
+    cmd = cmd .. ' ' .. args
+  end
+  if pythonpath and pythonpath ~= '' then
+    cmd = 'PYTHONPATH=' .. vim.fn.shellescape(pythonpath) .. ' ' .. cmd
+  end
+  M.open_term(cmd, { cwd = root, size = 15 })
+end
+
+function M.run_file()
+  prompt_input('Python args', '', function(args)
+    run_file_command(args)
+  end)
+end
+
+function M.run_file_with_args_pythonpath()
+  local root = M.root()
+  prompt_input('Python args', '', function(args)
+    prompt_input('PYTHONPATH', root, function(pythonpath)
+      run_file_command(args, pythonpath)
+    end)
+  end)
 end
 
 function M.run_selection()
