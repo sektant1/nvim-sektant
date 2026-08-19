@@ -19,6 +19,12 @@ return {
       'nvim-neotest/nvim-nio',
 
       'mfussenegger/nvim-dap-python',
+      {
+        'ownself/nvim-dap-unity',
+        build = function()
+          require('nvim-dap-unity').install()
+        end,
+      },
 
       -- Installs the debug adapters for you
       'mason-org/mason.nvim',
@@ -106,6 +112,7 @@ return {
           'codelldb',
           'python',
           'js-debug-adapter',
+          'netcoredbg',
         },
       }
 
@@ -252,6 +259,46 @@ return {
       }
       dap.configurations.cpp = cpp_configs
       dap.configurations.c = cpp_configs
+
+      -- ── C# / Unity ───────────────────────────────────────────────────────
+      local netcoredbg = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg'
+      if vim.fn.executable(netcoredbg) == 1 then
+        dap.adapters.coreclr = {
+          type = 'executable',
+          command = netcoredbg,
+          args = { '--interpreter=vscode' },
+        }
+      end
+
+      local function pick_dll()
+        return vim.fn.input('Assembly dll: ', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+      end
+
+      dap.configurations.cs = dap.configurations.cs or {}
+      vim.list_extend(dap.configurations.cs, {
+        {
+          type = 'coreclr',
+          name = '.NET: Launch assembly',
+          request = 'launch',
+          program = pick_dll,
+          cwd = '${workspaceFolder}',
+          console = 'integratedTerminal',
+          stopAtEntry = false,
+        },
+        {
+          type = 'coreclr',
+          name = '.NET: Attach to process',
+          request = 'attach',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
+      })
+
+      require('nvim-dap-unity').setup {
+        auto_install_on_start = false,
+        auto_setup_dap = true,
+        enable_unity_cs_configuration = true,
+      }
     end,
   },
   {

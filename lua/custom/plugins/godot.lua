@@ -2,6 +2,26 @@ return {
   'Mathijs-Bakker/godotdev.nvim',
   dependencies = { 'nvim-dap', 'nvim-dap-ui', 'nvim-treesitter' },
 
+  init = function()
+    -- Godot file types (parsers/highlights managed in kickstart/plugins/treesitter.lua)
+    vim.filetype.add {
+      extension = {
+        gd = 'gdscript',
+        gdshader = 'gdshader',
+        gdshaderinc = 'gdshader',
+        tres = 'gdresource',
+        tscn = 'gdresource',
+        godot = 'gdresource',
+        gdextension = 'gdresource',
+      },
+      filename = {
+        ['project.godot'] = 'gdresource',
+      },
+    }
+    -- parser is named `godot_resource`, filetype is `gdresource`
+    vim.treesitter.language.register('godot_resource', 'gdresource')
+  end,
+
   config = function()
     require('godotdev').setup {
       editor_host = '127.0.0.1', -- Godot editor host
@@ -34,7 +54,7 @@ return {
         remove_stale_socket = true,
       },
       treesitter = {
-        auto_setup = true, -- convenience default; disable if you manage nvim-treesitter yourself
+        auto_setup = false, -- managed by kickstart/plugins/treesitter.lua (main branch API)
         ensure_installed = { 'gdscript' },
       },
       docs = {

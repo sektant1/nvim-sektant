@@ -1,6 +1,14 @@
 vim.filetype.add {
   extension = {
     mat = 'json',
+    scene = 'json',
+    material = 'glsl',
+    program = 'glsl',
+    vert = 'glsl',
+    frag = 'glsl',
+    geom = 'glsl',
+    comp = 'glsl',
+    hlsl = 'hlsl',
   },
 }
 

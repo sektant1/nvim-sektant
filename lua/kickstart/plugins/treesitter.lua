@@ -8,6 +8,10 @@ return {
         -- Included by default, you can add your own you want ensure to be installed.
         'c',
         'cpp',
+        'c_sharp',
+        'gdscript',
+        'gdshader',
+        'godot_resource',
         'bash',
         'python',
         'jsx',

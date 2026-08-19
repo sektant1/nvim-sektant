@@ -22,6 +22,7 @@ return {
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        cs = { 'csharpier' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
         cmake = { 'cmake_format' },
