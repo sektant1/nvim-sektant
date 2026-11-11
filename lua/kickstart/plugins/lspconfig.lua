@@ -208,8 +208,6 @@ return {
         'shellcheck',
         'shfmt',
         'prettier',
-        'roslyn',
-        'csharpier',
         'netcoredbg',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
