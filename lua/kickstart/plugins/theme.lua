@@ -71,11 +71,6 @@ return {
   { 'EdenEast/nightfox.nvim', lazy = true },
   { 'ribru17/bamboo.nvim', lazy = true },
   { 'OldJobobo/retro-82.nvim', lazy = true },
-  {
-    'gthelding/monokai-pro.nvim',
-    lazy = true,
-    opts = { filter = 'ristretto' },
-  },
   { 'rose-pine/neovim', name = 'rose-pine', lazy = true },
   { 'bjarneo/vantablack.nvim', lazy = true },
   { 'bjarneo/white.nvim', lazy = true },
